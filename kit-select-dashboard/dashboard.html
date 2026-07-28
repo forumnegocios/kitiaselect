@@ -1,0 +1,2489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kit Select IA — Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Mulish:wght@300;400;500;600;700&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#013B6B;--navy-d:#012d52;--navy-l:#0a4a80;
+  --gold:#C1A44F;--gold-l:#d4b96a;--gold-bg:#fdf3d9;
+  --off:#F7F5F0;--gray:#EBEBEB;--gray-d:#d4d4d4;
+  --dark:#1D1D1D;--mid:#4a4a4a;--muted:#8a8a8a;--white:#fff;
+  --green:#2a7a4f;--green-bg:#e8f7ee;
+  --blue-bg:#e8f4fd;--blue:#1a6ea8;
+  --orange-bg:#fff0e0;--orange:#b06000;
+  --purple-bg:#f5f0ff;--purple:#6020a0;
+  --sb:215px;
+  --radius:10px;--radius-sm:7px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+}
+body{font-family:'Mulish',sans-serif;background:var(--off);color:var(--dark);display:flex;height:100vh;overflow:hidden;font-size:13px}
+
+/* ── SIDEBAR ── */
+.sb{width:var(--sb);background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-brand{padding:18px 16px 15px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand-row{display:flex;align-items:center;gap:10px}
+.brand-icon{width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Source Serif 4',serif;font-weight:700;font-size:18px;color:var(--navy);flex-shrink:0}
+.brand-name{font-family:'Source Serif 4',serif;font-size:13px;font-weight:700;color:#fff;line-height:1.25}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.4);font-style:italic;margin-top:1px}
+.sb-label{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:15px 16px 5px}
+.sb-nav{list-style:none;padding:0 8px}
+.ni{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:var(--radius-sm);cursor:pointer;color:rgba(255,255,255,.65);font-weight:500;font-size:12.5px;margin-bottom:2px;transition:background .12s;user-select:none}
+.ni:hover{background:rgba(255,255,255,.08);color:#fff}
+.ni.on{background:var(--gold);color:var(--navy);font-weight:700}
+.ni.on .badge{background:var(--navy);color:var(--gold)}
+.ni-l{display:flex;align-items:center;gap:8px}
+.badge{background:rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;min-width:22px;text-align:center}
+.sb-foot{margin-top:auto;padding:12px 16px;border-top:1px solid rgba(255,255,255,.07);font-size:10px;color:rgba(255,255,255,.28);line-height:1.6}
+.sb-foot strong{color:rgba(255,255,255,.45)}
+
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:#012d52;border-bottom:1px solid rgba(255,255,255,.08);padding:9px 26px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-shrink:0}
+.tb-l{display:flex;align-items:baseline;gap:14px}
+.tb-title{display:none}
+.tb-meta{font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.2px}
+.tb-meta span{color:var(--gold);font-weight:600}
+.tb-search{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:7px 15px;font-family:'Mulish',sans-serif;font-size:12px;color:#fff;width:260px;outline:none;transition:border-color .15s,background .15s}
+.tb-search:focus{border-color:var(--gold);background:rgba(255,255,255,.14)}
+.tb-search::placeholder{color:rgba(255,255,255,.4)}
+.content{flex:1;overflow-y:auto;padding:22px 26px}
+
+/* ── PAGE (sections) ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:20px}
+.kpi{background:var(--white);border-radius:var(--radius);padding:15px 17px;border:1px solid var(--gray);box-shadow:var(--shadow)}
+.kpi-val{font-family:'Source Serif 4',serif;font-size:28px;font-weight:700;color:var(--navy);line-height:1;margin-bottom:3px}
+.kpi-val.gold{color:var(--gold)}
+.kpi-val.green{color:var(--green)}
+.kpi-val.muted{font-size:14px;color:var(--muted);font-family:'Mulish',sans-serif;font-style:italic;padding-top:8px}
+.kpi-lab{font-size:11px;color:var(--muted);font-weight:500}
+
+/* ── CARDS ── */
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:var(--white);border-radius:var(--radius);border:1px solid var(--gray);overflow:hidden;box-shadow:var(--shadow)}
+.card.full{grid-column:1/-1}
+.card.mb{margin-bottom:16px}
+.card-head{padding:13px 17px 11px;border-bottom:1px solid var(--gray);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Source Serif 4',serif;font-size:15px;font-weight:600;color:var(--navy)}
+.card-act{font-size:11px;color:var(--gold);cursor:pointer;font-weight:600}
+.card-act:hover{text-decoration:underline}
+.card-body{padding:15px 17px}
+
+/* ── TOOLS GRID ── */
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.tools-grid.lg{grid-template-columns:repeat(3,1fr)}
+.tc{background:var(--off);border-radius:var(--radius-sm);padding:12px 13px;cursor:pointer;border:1px solid transparent;border-left:3px solid var(--ac,var(--gold));transition:border-color .13s,background .13s;display:flex;align-items:flex-start;gap:9px}
+.tc:hover{border-color:var(--ac,var(--gold));background:rgba(var(--ac-rgb,193,164,79),.07)}
+.tc-ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.tc-ic svg.ic{width:18px;height:18px}
+.tc-name{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:2px}
+.tc-desc{font-size:10px;color:var(--muted);line-height:1.4}
+.tc-foot{display:flex;align-items:center;gap:6px;margin-top:6px}
+.tag{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+.t-base{background:var(--blue-bg);color:var(--navy)}
+.t-c{background:var(--blue-bg);color:var(--blue)}
+.t-v{background:var(--orange-bg);color:var(--orange)}
+.t-a{background:var(--green-bg);color:var(--green)}
+.t-m{background:var(--purple-bg);color:var(--purple)}
+.t-d{background:var(--gold-bg);color:#8a6010}
+.prompt-btn{font-size:9px;font-weight:600;color:var(--gold);border:1px solid var(--gold);border-radius:4px;padding:2px 7px;cursor:pointer;background:transparent;transition:background .12s,color .12s}
+.prompt-btn:hover{background:var(--gold);color:var(--white)}
+
+/* ── NETFLIX-STYLE RAILS ── */
+.nfx{margin:-22px -26px 20px;padding:0 0 10px;background:linear-gradient(180deg,#012d52 0%,#013B6B 62%,#01305a 100%);position:relative}
+.nfx-top{display:flex;align-items:flex-end;justify-content:space-between;padding:4px 26px 14px}
+.nfx-kicker{font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--gold)}
+.nfx-title{font-family:'Source Serif 4',serif;font-size:20px;font-weight:700;color:#fff;line-height:1.2;margin-top:2px}
+.nfx-top-act{font-size:11px;font-weight:600;color:var(--gold);cursor:pointer}
+.nfx-top-act:hover{text-decoration:underline}
+
+/* tratamento duotone: base azul da marca + cor de acento da ferramenta
+   (--ac / --ac-rgb / --ac-ink são definidos inline por ferramenta) */
+.nfx-shot{position:absolute;inset:0;background-size:cover;background-position:center;filter:grayscale(1) contrast(1.12) brightness(.9);transition:transform 6s ease-out}
+.nfx-tint{position:absolute;inset:0;background:linear-gradient(140deg,#012d52 0%,#0a4a80 42%,var(--ac,#C1A44F) 100%);mix-blend-mode:color;opacity:.95}
+.nfx-sheen{position:absolute;inset:0;background:radial-gradient(115% 130% at 88% 4%,rgba(var(--ac-rgb,193,164,79),.62),rgba(var(--ac-rgb,193,164,79),0) 60%);mix-blend-mode:soft-light}
+.nfx-scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(1,30,55,.05) 18%,rgba(1,25,47,.62) 68%,rgba(1,22,42,.94) 100%)}
+
+/* HERO CARROSSEL (container gigante) */
+.nfx-hero{position:relative;height:400px;overflow:hidden;margin-bottom:22px;border-top:1px solid rgba(255,255,255,.07);border-bottom:1px solid rgba(255,255,255,.07);background:#012d52}
+.hs{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .7s ease;isolation:isolate}
+.hs.on{opacity:1;visibility:visible}
+.hs.on .nfx-shot{transform:scale(1.07)}
+.hs .nfx-scrim{background:linear-gradient(100deg,rgba(1,25,47,.94) 0%,rgba(1,30,55,.82) 38%,rgba(1,35,64,.34) 72%,rgba(1,40,72,.12) 100%),linear-gradient(180deg,rgba(1,25,47,.3),rgba(1,22,42,.75))}
+.hs-body{position:absolute;z-index:2;left:26px;top:0;bottom:0;width:56%;min-width:420px;padding:34px 0 34px 22px;border-left:4px solid var(--ac,var(--gold));display:flex;flex-direction:column;justify-content:center;gap:0}
+.hs-eyebrow{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.hs-mark{width:40px;height:40px;border-radius:11px;background:var(--ac,var(--gold));color:var(--ac-ink,var(--navy));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 3px 14px rgba(var(--ac-rgb,193,164,79),.5)}
+.hs-mark svg.ic{width:21px;height:21px;stroke-width:2.2}
+.hs-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(var(--ac-rgb,193,164,79),.2);color:var(--ac,var(--gold));border:1px solid rgba(var(--ac-rgb,193,164,79),.55);font-size:9.5px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;padding:5px 10px;border-radius:5px}
+.hs-badge svg.ic{width:14px;height:14px}
+.hs-cat{font-size:10px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.hs-title{font-family:'Source Serif 4',serif;font-size:44px;line-height:1.05;font-weight:700;color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.45)}
+.hs-desc{font-size:16px;line-height:1.5;color:rgba(255,255,255,.82);margin-top:14px;max-width:520px}
+.hs-acts{display:flex;align-items:center;gap:11px;margin-top:26px}
+.hs-btn{display:inline-flex;align-items:center;gap:8px;font-family:'Mulish',sans-serif;font-size:12.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:12px 20px;border-radius:6px;border:none;cursor:pointer;transition:background .14s,transform .14s}
+.hs-btn.pri{background:var(--ac,var(--gold));color:var(--ac-ink,var(--navy));box-shadow:0 4px 16px rgba(var(--ac-rgb,193,164,79),.35)}
+.hs-btn.pri:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.hs-btn.sec{background:rgba(255,255,255,.14);color:#fff;backdrop-filter:blur(3px)}
+.hs-btn.sec:hover{background:rgba(255,255,255,.24)}
+.hs-btn svg.ic{width:15px;height:15px}
+.hero-arrow{position:absolute;top:0;bottom:0;width:56px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,rgba(1,25,47,.6),rgba(1,25,47,0));color:#fff;border:none;cursor:pointer;opacity:0;transition:opacity .18s;z-index:4}
+.hero-arrow.r{right:0;background:linear-gradient(270deg,rgba(1,25,47,.6),rgba(1,25,47,0))}
+.hero-arrow.l{left:0}
+.nfx-hero:hover .hero-arrow{opacity:1}
+.hero-arrow svg{width:26px;height:26px;stroke:currentColor;stroke-width:2.2;fill:none}
+.hero-dots{position:absolute;z-index:4;bottom:16px;right:26px;display:flex;gap:7px}
+.hero-dot{width:26px;height:4px;border-radius:3px;background:rgba(255,255,255,.28);cursor:pointer;transition:background .18s,width .18s}
+.hero-dot.on{background:var(--dot-ac,var(--gold));width:38px}
+@media (max-width:1100px){
+  .nfx-hero{height:330px}
+  .hs-title{font-size:34px}
+  .hs-desc{font-size:14px}
+  .hs-body{width:72%;min-width:0}
+}
+
+/* trilhas */
+.nfx-row{margin-bottom:14px}
+.nfx-row-head{display:flex;align-items:center;justify-content:space-between;padding:0 26px 7px}
+.nfx-row-title{font-size:12.5px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.2px}
+.nfx-row-count{font-size:10px;color:rgba(255,255,255,.35);font-weight:600}
+.nfx-rail{position:relative}
+.nfx-track{display:flex;gap:11px;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;scroll-snap-type:x proximity;padding:9px 26px 13px;scrollbar-width:none}
+.nfx-track::-webkit-scrollbar{display:none}
+.nfx-arrow{position:absolute;top:0;bottom:0;width:44px;display:flex;align-items:center;justify-content:center;background:rgba(1,30,55,.72);color:#fff;border:none;cursor:pointer;opacity:0;transition:opacity .16s,background .16s;z-index:3}
+.nfx-arrow:hover{background:rgba(1,30,55,.92)}
+.nfx-arrow.l{left:0}.nfx-arrow.r{right:0}
+.nfx-rail:hover .nfx-arrow{opacity:1}
+.nfx-arrow svg{width:20px;height:20px;stroke:currentColor;stroke-width:2.4;fill:none}
+
+/* card poster */
+.nfx-card{position:relative;flex:0 0 244px;height:150px;border-radius:9px;overflow:hidden;cursor:pointer;scroll-snap-align:start;box-shadow:0 3px 10px rgba(0,0,0,.28);transition:transform .2s ease,box-shadow .2s ease;outline:1px solid rgba(255,255,255,.07);outline-offset:-1px;background:#012d52;isolation:isolate}
+.nfx-card:hover{transform:scale(1.04);box-shadow:0 10px 26px rgba(0,0,0,.45);outline-color:var(--ac,var(--gold))}
+.nfx-card .nfx-shot{transition:transform .35s ease}
+.nfx-card:hover .nfx-shot{transform:scale(1.06)}
+/* faixa de sinalização da ferramenta */
+.nfx-card::after{content:'';position:absolute;z-index:3;left:0;right:0;bottom:0;height:3px;background:var(--ac,var(--gold));opacity:.85;transition:height .18s ease,opacity .18s ease}
+.nfx-card:hover::after{height:5px;opacity:1}
+.nfx-card-ic{position:absolute;z-index:2;top:12px;left:13px;width:34px;height:34px;border-radius:9px;background:var(--ac,var(--gold));color:var(--ac-ink,var(--navy));display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(var(--ac-rgb,193,164,79),.45)}
+.nfx-card-ic svg.ic{width:18px;height:18px;stroke-width:2.2}
+.nfx-card-tag{position:absolute;z-index:2;top:15px;right:13px;font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--ac,#fff);background:rgba(1,25,47,.55);border:1px solid rgba(var(--ac-rgb,193,164,79),.45);padding:3px 7px;border-radius:4px}
+.nfx-card-body{position:absolute;left:13px;right:13px;bottom:12px;z-index:2}
+.nfx-card-name{font-size:14px;font-weight:700;color:#fff;line-height:1.25;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.nfx-card-desc{font-size:11px;color:rgba(255,255,255,.72);line-height:1.4;margin-top:4px;max-height:0;opacity:0;overflow:hidden;transition:max-height .2s ease,opacity .18s ease,margin-top .2s ease}
+.nfx-card:hover .nfx-card-desc{max-height:34px;opacity:1}
+.nfx-card-cta{display:inline-flex;align-items:center;gap:5px;margin-top:0;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--ac-ink,var(--navy));background:var(--ac,var(--gold));border:none;border-radius:4px;padding:0 9px;height:0;opacity:0;overflow:hidden;cursor:pointer;font-family:'Mulish',sans-serif;transition:height .18s ease,opacity .18s ease,margin-top .18s ease}
+.nfx-card:hover .nfx-card-cta{height:22px;opacity:1;margin-top:8px}
+.nfx-card-cta:hover{filter:brightness(1.1)}
+
+@media (max-width:1100px){.nfx-card{flex:0 0 200px;height:128px}}
+
+/* ── PERFIL ── */
+.pf-grid{display:flex;flex-direction:column;gap:0}
+.pf-grid.cols{display:grid;grid-template-columns:1fr 1fr;column-gap:30px}
+.pf-row{display:flex;align-items:baseline;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray)}
+.pf-row:last-child{border-bottom:none}
+.pf-key{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;width:90px;flex-shrink:0}
+.pf-val{font-size:12px;color:var(--mid);line-height:1.4}
+.pf-val.empty{font-style:italic;color:var(--muted)}
+.hint{margin-top:14px;padding:9px 12px;background:var(--gold-bg);border-radius:var(--radius-sm);font-size:11px;color:#8a6010;border-left:3px solid var(--gold)}
+
+/* ── OUTPUTS LIST ── */
+.output-list{display:flex;flex-direction:column;gap:8px}
+.oi{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--off);border-radius:var(--radius-sm);cursor:pointer;transition:background .13s;border:1px solid transparent}
+.oi:hover{background:#f0ece3;border-color:var(--gray-d)}
+.oi-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.oi-meta{flex:1;min-width:0}
+.oi-name{font-size:12px;font-weight:600;color:var(--dark);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.oi-date{font-size:10px;color:var(--muted)}
+.oi-del{font-size:12px;color:var(--muted);padding:4px 6px;border-radius:4px;cursor:pointer;transition:color .12s,background .12s;flex-shrink:0}
+.oi-del:hover{color:#c0392b;background:#fdecea}
+
+/* ── OUTPUT DETAIL MODAL ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--white);border-radius:var(--radius);width:680px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--gray);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Source Serif 4',serif;font-size:17px;font-weight:700;color:var(--navy)}
+.modal-close{font-size:20px;cursor:pointer;color:var(--muted);line-height:1;padding:2px 6px;border-radius:4px}
+.modal-close:hover{background:var(--gray);color:var(--dark)}
+.modal-body{padding:20px;overflow-y:auto;flex:1}
+.modal-content{font-size:13px;color:var(--mid);line-height:1.7;white-space:pre-wrap;font-family:'Mulish',sans-serif}
+.modal-foot{padding:12px 20px;border-top:1px solid var(--gray);display:flex;gap:10px;justify-content:flex-end}
+.btn{padding:8px 18px;border-radius:6px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:700;cursor:pointer;border:none;transition:background .13s,color .13s}
+.btn-gold{background:var(--gold);color:var(--white)}
+.btn-gold:hover{background:var(--gold-l)}
+.btn-outline{background:transparent;color:var(--navy);border:1px solid var(--navy)}
+.btn-outline:hover{background:var(--navy);color:var(--white)}
+
+/* ── PERFIL FORM ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-grid.single{grid-template-columns:1fr}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
+.field input,.field textarea{padding:9px 12px;border:1px solid var(--gray);border-radius:6px;font-family:'Mulish',sans-serif;font-size:12px;color:var(--dark);outline:none;transition:border-color .13s;background:var(--off)}
+.field input:focus,.field textarea:focus{border-color:var(--gold);background:var(--white)}
+.field textarea{resize:vertical;min-height:72px}
+.form-actions{margin-top:18px;display:flex;gap:10px;align-items:center}
+.save-ok{font-size:12px;color:var(--green);font-weight:600;display:none}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--gray);background:var(--white);color:var(--mid);transition:background .12s,border-color .12s,color .12s}
+.filter-chip:hover{border-color:var(--gold);color:var(--gold)}
+.filter-chip.on{background:var(--navy);border-color:var(--navy);color:var(--white)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:30px 0;color:var(--muted);font-size:12px}
+.empty .em{font-size:28px;display:block;margin-bottom:7px}
+.empty-hint{margin-top:12px;font-size:11px;color:var(--mid)}
+.empty-hint strong{color:var(--navy);font-weight:700}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy);color:var(--white);padding:10px 18px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.2);display:none;z-index:200;border-left:3px solid var(--gold)}
+.toast.show{display:block;animation:fadeup .25s ease}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── BOTTOM BAR ── */
+.bbar{flex-shrink:0;height:6px;background:var(--navy);position:relative}
+.bbar::before{content:'';position:absolute;left:0;top:0;width:120px;height:100%;background:linear-gradient(90deg,var(--gold),transparent)}
+.bbar::after{content:'';position:absolute;right:0;top:0;width:120px;height:100%;background:linear-gradient(270deg,var(--gold),transparent)}
+
+/* ── ICONS (inline SVG) ── */
+svg.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:middle}
+.ni-l svg.ic{width:16px;height:16px}
+.filter-chip svg.ic{width:14px;height:14px;vertical-align:-2px;margin-right:1px}
+.card-act svg.ic{width:13px;height:13px;vertical-align:-2px;margin-right:2px}
+.hint svg.ic{width:15px;height:15px;vertical-align:-3px;margin-right:4px}
+.save-ok svg.ic{width:14px;height:14px;vertical-align:-2px;margin-right:3px}
+.oi-icon svg.ic{width:17px;height:17px}
+.kpi-val svg.ic{width:22px;height:22px;vertical-align:-2px;stroke-width:2.4}
+.oi-del svg.ic{width:15px;height:15px}
+.empty .em svg.ic{width:30px;height:30px;stroke-width:1.6}
+
+/* ── CALENDÁRIO DE CONTEÚDO ── */
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:12px;flex-wrap:wrap}
+.cal-info{font-size:11px;color:var(--muted)}
+.cal-info strong{color:var(--navy);font-weight:700}
+.cal-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.cal-leg{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;color:var(--mid)}
+.cal-leg .dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.cal-grid{display:grid;grid-template-columns:46px repeat(7,minmax(96px,1fr));gap:6px;min-width:760px}
+.cal-daylabel{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);text-align:center;padding:4px 0}
+.cal-weeklabel{display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:var(--navy);background:var(--gold-bg);border-radius:var(--radius-sm);text-align:center;line-height:1.2;padding:6px 2px}
+.cal-cell{min-height:82px;background:var(--white);border:1px solid var(--gray);border-radius:var(--radius-sm);padding:5px;display:flex;flex-direction:column;gap:5px}
+.cal-cell.empty{background:var(--off);border-style:dashed;border-color:var(--gray-d)}
+.cal-post{border-radius:6px;padding:6px 7px;cursor:pointer;border-left:3px solid var(--gold);background:var(--off);transition:transform .1s,box-shadow .12s}
+.cal-post:hover{box-shadow:var(--shadow);transform:translateY(-1px)}
+.cal-post .cp-pilar{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.cal-post .cp-title{font-size:10.5px;font-weight:600;color:var(--dark);line-height:1.25;margin:2px 0}
+.cal-post .cp-fmt{font-size:9px;color:var(--muted)}
+.cal-post .cp-ready{display:flex;gap:3px;margin-top:4px;align-items:center}
+.cal-post .cp-ready i{width:6px;height:6px;border-radius:50%;background:var(--gray-d);display:inline-block}
+.cal-post .cp-ready i.on{background:var(--green)}
+
+/* ── MATERIAIS AGENDADOS NO CALENDÁRIO ── */
+.cal-post.agendado{border-left-color:var(--navy);background:#eef3f8}
+.cal-post .cp-when{font-size:8.5px;font-weight:700;color:var(--muted);margin-top:4px;letter-spacing:.3px}
+.cal-post .cp-rm{position:absolute;top:3px;right:3px;color:var(--muted);padding:2px 3px;border-radius:4px;line-height:1;opacity:0;transition:opacity .12s,color .12s,background .12s}
+.cal-post{position:relative}
+.cal-post:hover .cp-rm{opacity:1}
+.cal-post .cp-rm:hover{color:#c0392b;background:#fdecea}
+.cal-post .cp-rm svg.ic{width:11px;height:11px}
+.ag-list{display:flex;flex-direction:column;gap:7px}
+.ag-item{display:flex;align-items:center;gap:11px;padding:9px 12px;background:var(--off);border:1px solid var(--gray);border-radius:var(--radius-sm)}
+.ag-when{flex-shrink:0;width:58px;text-align:center;background:var(--navy);color:var(--white);border-radius:6px;padding:4px 0;line-height:1.15}
+.ag-when .d{font-size:14px;font-weight:800;display:block}
+.ag-when .m{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;opacity:.85}
+.ag-meta{flex:1;min-width:0}
+.ag-name{font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.ag-name:hover{color:var(--gold)}
+.ag-tool{font-size:10px;color:var(--muted);margin-top:2px}
+.ag-rm{flex-shrink:0;color:var(--muted);padding:4px 6px;border-radius:5px;cursor:pointer;transition:color .12s,background .12s}
+.ag-rm:hover{color:#c0392b;background:#fdecea}
+.ag-rm svg.ic{width:14px;height:14px}
+.gal-sched{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);background:#eef3f8;border:1px solid #d5e2ee;border-radius:20px;padding:2px 8px}
+.gal-sched svg.ic{width:11px;height:11px}
+
+/* ── MODAL DE AGENDAMENTO ── */
+.ag-form{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.ag-form .field{flex:1;min-width:130px}
+.ag-form select{padding:9px 12px;border:1px solid var(--gray);border-radius:6px;font-family:'Mulish',sans-serif;font-size:12px;color:var(--dark);background:var(--off);outline:none;transition:border-color .13s}
+.ag-form select:focus{border-color:var(--gold);background:var(--white)}
+.ag-target{font-size:12px;color:var(--mid);line-height:1.5;background:var(--off);border:1px solid var(--gray);border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:16px}
+.ag-target strong{display:block;color:var(--navy);font-family:'Source Serif 4',serif;font-size:14px;font-weight:700;margin-bottom:2px}
+.ag-preview{margin-top:14px;font-size:11.5px;color:#8a6010;background:var(--gold-bg);border-left:3px solid var(--gold);border-radius:var(--radius-sm);padding:9px 12px}
+.ag-preview strong{font-weight:700}
+
+/* ── POST DETAIL MODAL ── */
+.pd-brief{background:var(--off);border-radius:var(--radius-sm);padding:12px 15px;margin-bottom:18px;border:1px solid var(--gray)}
+.pd-row{display:flex;gap:8px;padding:4px 0;font-size:12px}
+.pd-k{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);width:70px;flex-shrink:0;padding-top:2px}
+.pd-v{color:var(--mid);line-height:1.45}
+.pd-sec{margin-bottom:18px}
+.pd-sec:last-child{margin-bottom:0}
+.pd-sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.pd-sec-title{font-family:'Source Serif 4',serif;font-size:13.5px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:6px}
+.pd-sec-title svg.ic{width:15px;height:15px;color:var(--gold)}
+.pd-status{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 9px;border-radius:20px}
+.pd-status.done{background:var(--green-bg);color:var(--green)}
+.pd-status.pending{background:var(--gray);color:var(--muted)}
+.pd-body-txt{font-size:12px;color:var(--mid);line-height:1.6;white-space:pre-wrap;background:var(--off);border:1px solid var(--gray);border-radius:var(--radius-sm);padding:12px 14px;max-height:220px;overflow-y:auto;margin-bottom:8px}
+.pd-empty{font-size:11.5px;color:var(--muted);font-style:italic;padding:8px 0 10px}
+.pd-act-btn{width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:10px 13px;border-radius:var(--radius-sm);border:1px solid var(--gray);background:var(--white);cursor:pointer;transition:border-color .12s,background .12s;text-align:left}
+.pd-act-btn:hover{border-color:var(--gold);background:#fdf9f0}
+.pd-act-btn .ab-t{font-size:11.5px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:6px}
+.pd-act-btn .ab-t svg.ic{width:14px;height:14px}
+.pd-act-btn .ab-d{font-size:9.5px;color:var(--muted);padding-left:20px}
+.pd-act-btn.variation{border-color:var(--gold);background:var(--gold-bg)}
+.pd-act-btn.variation .ab-t{color:#8a6010}
+
+/* ── ÁREAS (chips em cima · galeria no meio · CTA embaixo) ── */
+.area-nav{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.area-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--gray);background:var(--white);color:var(--mid);transition:background .12s,border-color .12s,color .12s}
+.area-chip:hover{border-color:var(--gold);color:var(--gold)}
+.area-chip.on{background:var(--navy);border-color:var(--navy);color:var(--white)}
+.area-chip svg.ic{width:14px;height:14px}
+.area-chip .n{font-size:9px;font-weight:700;padding:0 4px;border-radius:8px;background:var(--off);color:var(--muted);min-width:14px;text-align:center}
+.area-chip.on .n{background:rgba(255,255,255,.18);color:#fff}
+.area-mid{margin-bottom:18px}
+.area-cta{margin-top:2px}
+.area-cta .card-title svg.ic{color:var(--gold)}
+
+/* ── GALERIA DE RESPOSTAS (ATENDER) ── */
+.atd-intro{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--white);border:1px solid var(--gray);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.atd-intro-txt{font-size:11.5px;color:var(--mid);line-height:1.5;max-width:560px}
+.atd-intro-txt strong{color:var(--navy);font-family:'Source Serif 4',serif;font-size:14px;font-weight:700;display:block;margin-bottom:3px}
+.atd-intro .btn{flex-shrink:0}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.gal-card{position:relative;background:var(--white);border:1px solid var(--gray);border-radius:var(--radius);padding:14px 15px 12px;cursor:pointer;box-shadow:var(--shadow);transition:border-color .13s,transform .1s,box-shadow .13s;display:flex;flex-direction:column;gap:9px;min-height:150px}
+.gal-card:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.gal-head{display:flex;align-items:flex-start;gap:9px}
+.gal-ic{width:32px;height:32px;border-radius:8px;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gal-ic svg.ic{width:17px;height:17px}
+.gal-title{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.3;flex:1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gal-preview{font-size:11px;color:var(--muted);line-height:1.55;flex:1;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.gal-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:9px;border-top:1px solid var(--gray)}
+.gal-date{font-size:10px;color:var(--muted)}
+.gal-del{position:absolute;top:9px;right:9px;color:var(--muted);padding:3px 5px;border-radius:5px;cursor:pointer;opacity:0;transition:opacity .12s,color .12s,background .12s}
+.gal-card:hover .gal-del{opacity:1}
+.gal-del:hover{color:#c0392b;background:#fdecea}
+.gal-del svg.ic{width:14px;height:14px}
+.modal-foot .btn svg.ic{width:14px;height:14px;vertical-align:-2px;margin-right:5px}
+.btn-ghost{background:transparent;color:var(--mid);border:1px solid var(--gray)}
+.btn-ghost:hover{background:var(--off);color:var(--navy);border-color:var(--gray-d)}
+.btn[disabled]{opacity:.55;cursor:progress}
+.modal-foot{flex-wrap:wrap}
+
+/* ── GALERIA GENÉRICA (Mercado / Documentos) ── */
+.gal-modal-sub{font-size:10.5px;color:var(--muted);margin-top:3px}
+.gal-card:hover .gal-title{padding-right:20px}
+
+/* conteúdo renderizado do resultado (markdown leve) */
+.md{font-size:12.5px;color:var(--mid);line-height:1.65}
+.md h1,.md h2,.md h3{font-family:'Source Serif 4',serif;color:var(--navy);line-height:1.3}
+.md h1{font-size:16.5px;margin:18px 0 7px;padding-bottom:5px;border-bottom:2px solid var(--gold)}
+.md h2{font-size:14px;margin:16px 0 6px}
+.md h3{font-size:12.5px;margin:13px 0 5px;color:#8a6010}
+.md h1:first-child,.md h2:first-child,.md h3:first-child{margin-top:0}
+.md p{margin:0 0 9px}
+.md ul,.md ol{margin:0 0 10px;padding-left:20px}
+.md li{margin-bottom:4px}
+.md strong{color:var(--dark);font-weight:700}
+.md code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;background:var(--off);border:1px solid var(--gray);border-radius:4px;padding:1px 5px}
+.md blockquote{margin:0 0 10px;padding:8px 12px;background:var(--gold-bg);border-left:3px solid var(--gold);color:#8a6010;font-size:12px}
+.md hr{border:none;border-top:1px solid var(--gray);margin:14px 0}
+.md .md-tablewrap{overflow-x:auto;margin:0 0 12px}
+.md table{border-collapse:collapse;width:100%;font-size:11.5px}
+.md th{background:var(--navy);color:var(--white);font-weight:700;text-align:left;padding:7px 9px;border:1px solid var(--navy)}
+.md td{padding:6px 9px;border:1px solid var(--gray);vertical-align:top}
+.md tbody tr:nth-child(even){background:var(--off)}
+.gal-card .gal-ic.m{background:var(--purple-bg);color:var(--purple)}
+.gal-card .gal-ic.d{background:var(--gold-bg);color:#8a6010}
+.gal-card .gal-ic.v{background:#fff0e0;color:#b06000}
+.gal-count{font-size:11px;color:var(--muted);margin-bottom:11px}
+.gal-count strong{color:var(--navy);font-weight:700}
+.gal-quick{display:flex;gap:5px}
+.gal-quick button{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;border:1px solid var(--gray);background:var(--white);color:var(--mid);cursor:pointer;transition:border-color .12s,color .12s,background .12s;padding:0}
+.gal-quick button:hover{border-color:var(--gold);color:var(--gold);background:#fdf9f0}
+.gal-quick button svg.ic{width:14px;height:14px}
+
+/* ── MEU PROGRESSO ── */
+.card-title svg.ic{width:15px;height:15px;color:var(--gold);vertical-align:-2px;margin-right:4px}
+.pg-hero{background:var(--navy);border-radius:var(--radius);padding:18px 22px;margin-bottom:16px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;position:relative;overflow:hidden}
+.pg-hero::after{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(193,164,79,.14)}
+.pg-hero-txt{position:relative;z-index:1;max-width:60%}
+.pg-hero-txt h3{font-family:'Source Serif 4',serif;font-size:19px;font-weight:700;margin-bottom:5px;line-height:1.25}
+.pg-hero-txt p{font-size:11.5px;color:rgba(255,255,255,.62);line-height:1.55}
+.pg-hero-big{position:relative;z-index:1;text-align:right;flex-shrink:0}
+.pg-hero-big .n{font-family:'Source Serif 4',serif;font-size:40px;font-weight:700;color:var(--gold);line-height:1}
+.pg-hero-big .l{font-size:10.5px;color:rgba(255,255,255,.55);font-weight:600;text-transform:uppercase;letter-spacing:.7px;margin-top:3px}
+.pg-kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:16px}
+.pg-card{background:var(--white);border:1px solid var(--gray);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.pg-card .ic-badge{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:9px}
+.pg-card .ic-badge svg.ic{width:15px;height:15px}
+.pg-card .v{font-family:'Source Serif 4',serif;font-size:25px;font-weight:700;color:var(--navy);line-height:1}
+.pg-card .v small{font-size:13px;font-weight:600;color:var(--muted);font-family:'Mulish',sans-serif;margin-left:2px}
+.pg-card .l{font-size:11px;color:var(--muted);font-weight:500;margin-top:3px}
+.pg-card .s{font-size:10px;color:var(--gold);font-weight:700;margin-top:5px}
+
+/* barras semanais */
+.pg-bars{display:flex;align-items:flex-end;gap:9px;height:132px;padding-top:6px}
+.pg-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%}
+.pg-bar .col{width:100%;max-width:34px;background:var(--gold);border-radius:5px 5px 2px 2px;min-height:3px;transition:height .3s}
+.pg-bar.now .col{background:var(--navy)}
+.pg-bar .n{font-size:10px;font-weight:700;color:var(--navy)}
+.pg-bar .d{font-size:9px;color:var(--muted);white-space:nowrap}
+.pg-bar.zero .col{background:var(--gray)}
+.pg-bar.zero .n{color:var(--gray-d)}
+
+/* heatmap */
+.pg-heat{display:flex;gap:10px;align-items:flex-start;overflow-x:auto;padding-bottom:2px}
+.pg-heat-days{display:grid;grid-template-rows:repeat(7,12px);gap:3px;font-size:8.5px;color:var(--muted);padding-top:1px}
+.pg-heat-days span{line-height:12px}
+.pg-heat-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);gap:3px}
+.pg-heat-grid i{width:12px;height:12px;border-radius:3px;background:var(--gray);display:block}
+.pg-heat-grid i.l1{background:#dbe9f5}.pg-heat-grid i.l2{background:#9dc4e2}
+.pg-heat-grid i.l3{background:#4a8dbf}.pg-heat-grid i.l4{background:var(--navy)}
+.pg-heat-leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);margin-top:11px}
+.pg-heat-leg i{width:11px;height:11px;border-radius:3px;display:inline-block;background:var(--gray)}
+
+/* ranking de ferramentas */
+.pg-rank{display:flex;flex-direction:column;gap:9px}
+.pg-rank-row{display:grid;grid-template-columns:132px 1fr 54px;align-items:center;gap:10px}
+.pg-rank-name{font-size:11.5px;font-weight:600;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-rank-name.off{color:var(--muted);font-weight:500}
+.pg-rank-track{background:var(--off);border-radius:20px;height:15px;overflow:hidden;border:1px solid var(--gray)}
+.pg-rank-fill{height:100%;border-radius:20px;min-width:2px;transition:width .3s}
+.pg-rank-val{font-size:10.5px;color:var(--muted);text-align:right}
+.pg-rank-val strong{color:var(--navy);font-size:12px}
+
+/* mix por área */
+.pg-mix-bar{display:flex;height:15px;border-radius:20px;overflow:hidden;border:1px solid var(--gray);margin-bottom:12px}
+.pg-mix-bar span{height:100%}
+.pg-mix-legend{display:flex;flex-direction:column;gap:7px}
+.pg-mix-leg{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--mid)}
+.pg-mix-leg i{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.pg-mix-leg b{margin-left:auto;color:var(--navy)}
+
+/* marcos */
+.pg-marcos{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:10px}
+.pg-marco{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid var(--gray);border-radius:var(--radius-sm);background:var(--off)}
+.pg-marco.on{background:var(--gold-bg);border-color:var(--gold)}
+.pg-marco .mk-ic{width:28px;height:28px;border-radius:50%;background:var(--gray);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pg-marco.on .mk-ic{background:var(--gold);color:var(--white)}
+.pg-marco .mk-ic svg.ic{width:14px;height:14px}
+.pg-marco .mk-t{font-size:11.5px;font-weight:700;color:var(--navy)}
+.pg-marco.off .mk-t{color:var(--mid)}
+.pg-marco .mk-d{font-size:10px;color:var(--muted);line-height:1.4;margin-top:1px}
+.pg-marco .mk-p{margin-top:6px;height:4px;border-radius:20px;background:var(--gray-d);overflow:hidden}
+.pg-marco .mk-p i{display:block;height:100%;background:var(--gold);border-radius:20px}
+
+/* próximos passos */
+.pg-next{display:flex;flex-direction:column;gap:8px}
+.pg-next-row{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--gray);border-radius:var(--radius-sm);background:var(--off);cursor:pointer;transition:border-color .12s,background .12s}
+.pg-next-row:hover{border-color:var(--gold);background:#fdf9f0}
+.pg-next-ic{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pg-next-ic svg.ic{width:15px;height:15px}
+.pg-next-t{font-size:11.5px;font-weight:700;color:var(--navy)}
+.pg-next-d{font-size:10px;color:var(--muted);margin-top:1px}
+.pg-next-cta{margin-left:auto;font-size:9.5px;font-weight:700;color:var(--gold);white-space:nowrap}
+.pg-note{font-size:10.5px;color:var(--muted);line-height:1.5;margin-top:11px;padding-top:10px;border-top:1px solid var(--gray)}
+@media(max-width:960px){.pg-kpi{grid-template-columns:repeat(2,1fr)}.pg-hero-txt{max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- ICON SPRITE (inline SVG library — estilo linha, base Lucide MIT) -->
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></symbol>
+  <symbol id="i-calendar-plus" viewBox="0 0 24 24"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M21 13V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7"/><path d="M3 10h18"/><path d="M16 19h6"/><path d="M19 16v6"/></symbol>
+  <symbol id="i-dollar" viewBox="0 0 24 24"><line x1="12" x2="12" y1="2" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor" stroke="none"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor" stroke="none"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></symbol>
+  <symbol id="i-megaphone" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+  <symbol id="i-trending" viewBox="0 0 24 24"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+  <symbol id="i-award" viewBox="0 0 24 24"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+</svg>
+
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-brand">
+    <div class="brand-row">
+      <div class="brand-icon">S</div>
+      <div><div class="brand-name">Kit Select IA</div><div class="brand-sub">painel do empresário</div></div>
+    </div>
+  </div>
+
+  <div class="sb-label">Visão geral</div>
+  <ul class="sb-nav">
+    <li class="ni on" data-page="inicio"><span class="ni-l"><svg class="ic"><use href="#i-home"/></svg> Início</span></li>
+    <li class="ni" data-page="progresso"><span class="ni-l"><svg class="ic"><use href="#i-trending"/></svg> Meu progresso</span></li>
+  </ul>
+
+  <div class="sb-label">Áreas</div>
+  <ul class="sb-nav">
+    <li class="ni" data-page="conteudo"><span class="ni-l"><svg class="ic"><use href="#i-calendar"/></svg> Conteúdo</span><span class="badge" id="sb-conteudo-count">0</span></li>
+    <li class="ni" data-page="vender"><span class="ni-l"><svg class="ic"><use href="#i-dollar"/></svg> Vender</span><span class="badge" id="sb-vender-count">0</span></li>
+    <li class="ni" data-page="atender"><span class="ni-l"><svg class="ic"><use href="#i-chat"/></svg> Atender</span><span class="badge" id="sb-atender-count">0</span></li>
+    <li class="ni" data-page="mercado"><span class="ni-l"><svg class="ic"><use href="#i-search"/></svg> Mercado</span><span class="badge" id="sb-mercado-count">0</span></li>
+    <li class="ni" data-page="documentos"><span class="ni-l"><svg class="ic"><use href="#i-file"/></svg> Documentos</span><span class="badge" id="sb-documentos-count">0</span></li>
+  </ul>
+
+  <div class="sb-label">Meus dados</div>
+  <ul class="sb-nav">
+    <li class="ni" data-page="negocio"><span class="ni-l"><svg class="ic"><use href="#i-building"/></svg> Meu negócio</span></li>
+    <li class="ni" data-page="outputs"><span class="ni-l"><svg class="ic"><use href="#i-folder"/></svg> Outputs salvos</span><span class="badge" id="sb-output-count">0</span></li>
+  </ul>
+
+  <div class="sb-foot">Kit Select IA v0.5.0<br><strong>Fórum Negócios Select</strong><br>@forumnegociosselect</div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-l">
+      <span class="tb-title" id="page-title">Visão geral</span>
+      <div class="tb-meta" id="page-meta">última atualização <span id="last-update">—</span></div>
+    </div>
+    <input class="tb-search" type="text" id="global-search" placeholder="Buscar ferramenta, output…">
+  </div>
+
+  <div class="content">
+
+    <!-- PAGE: INÍCIO -->
+    <div class="page active" id="page-inicio">
+      <!-- NETFLIX-STYLE: hero carrossel + trilhas full-width -->
+      <section class="nfx">
+        <!-- carrossel gigante -->
+        <div class="nfx-hero" id="nfx-hero"></div>
+
+        <div class="nfx-top">
+          <div>
+            <div class="nfx-kicker">Kit Select IA</div>
+            <div class="nfx-title">Suas ferramentas</div>
+          </div>
+          <div class="nfx-top-act" onclick="nav('ferramentas')">ver catálogo completo →</div>
+        </div>
+
+        <!-- trilhas -->
+        <div id="nfx-rows"></div>
+      </section>
+
+      <div class="card full mb">
+        <div class="card-head">
+          <div class="card-title">Outputs recentes</div>
+          <div class="card-act" onclick="nav('outputs')">ver todos →</div>
+        </div>
+        <div class="card-body">
+          <div class="output-list" id="outputs-home"></div>
+        </div>
+      </div>
+
+      <div class="card full">
+        <div class="card-head">
+          <div class="card-title">Meu negócio</div>
+          <div class="card-act" onclick="nav('negocio')"><svg class="ic"><use href="#i-pencil"/></svg>editar</div>
+        </div>
+        <div class="card-body">
+          <div class="pf-grid cols" id="perfil-preview"></div>
+          <div class="hint"><svg class="ic"><use href="#i-zap"/></svg>Configure seu negócio uma vez e todas as ferramentas falam no seu tom automaticamente.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: MEU PROGRESSO -->
+    <div class="page" id="page-progresso">
+      <div id="pg-wrap"></div>
+    </div>
+
+    <!-- PAGE: CONTEÚDO (área) -->
+    <div class="page area" id="page-conteudo">
+      <div class="area-nav" id="area-nav-conteudo"></div>
+      <div class="atd-intro">
+        <div class="atd-intro-txt">
+          <strong>Seu calendário de conteúdo</strong>
+          O mês aprovado com todos os posts. Clique em um post para ver a descrição visual, a legenda e o roteiro — ou para pedir o que ainda falta.
+        </div>
+      </div>
+      <div class="area-mid" id="cal-wrap"></div>
+      <div class="area-cta" id="area-cta-conteudo"></div>
+    </div>
+
+    <!-- PAGE: VENDER (área) -->
+    <div class="page area" id="page-vender">
+      <div class="area-nav" id="area-nav-vender"></div>
+      <div class="atd-intro">
+        <div class="atd-intro-txt">
+          <strong>Seus materiais de venda</strong>
+          Anúncios e propostas comerciais salvos pelo Claude. Clique em um para ler o texto completo, baixar em PDF ou pedir uma nova versão.
+        </div>
+      </div>
+      <div class="area-mid" id="vender-gallery"></div>
+      <div class="area-cta" id="area-cta-vender"></div>
+    </div>
+
+    <!-- PAGE: ATENDER (área) -->
+    <div class="page area" id="page-atender">
+      <div class="area-nav" id="area-nav-atender"></div>
+      <div class="atd-intro">
+        <div class="atd-intro-txt">
+          <strong>Suas respostas prontas</strong>
+          Galeria de respostas padrão no tom da sua marca, salvas pelo Claude. Clique em uma para ver o texto completo, copiar direto pro WhatsApp ou pedir uma nova versão.
+        </div>
+      </div>
+      <div class="area-mid" id="atd-gallery"></div>
+      <div class="area-cta" id="area-cta-atender"></div>
+    </div>
+
+    <!-- PAGE: MERCADO (área) -->
+    <div class="page area" id="page-mercado">
+      <div class="area-nav" id="area-nav-mercado"></div>
+      <div class="atd-intro">
+        <div class="atd-intro-txt">
+          <strong>Suas pesquisas de mercado</strong>
+          Relatórios de concorrentes e oportunidades salvos pelo Claude. Clique em um para ler o relatório completo, baixar em PDF ou pedir uma nova versão.
+        </div>
+      </div>
+      <div class="area-mid" id="mercado-gallery"></div>
+      <div class="area-cta" id="area-cta-mercado"></div>
+    </div>
+
+    <!-- PAGE: DOCUMENTOS (área) -->
+    <div class="page area" id="page-documentos">
+      <div class="area-nav" id="area-nav-documentos"></div>
+      <div class="atd-intro">
+        <div class="atd-intro-txt">
+          <strong>Seus documentos resumidos</strong>
+          Resumos e pontos de atenção de contratos e documentos longos. Clique em um para ler o resumo completo, baixar em PDF ou pedir uma nova versão.
+        </div>
+      </div>
+      <div class="area-mid" id="documentos-gallery"></div>
+      <div class="area-cta" id="area-cta-documentos"></div>
+    </div>
+
+    <!-- PAGE: TODAS AS ÁREAS (catálogo de ferramentas) -->
+    <div class="page area" id="page-ferramentas">
+      <div class="area-nav" id="area-nav-ferramentas"></div>
+      <div class="atd-intro">
+        <div class="atd-intro-txt">
+          <strong>Todas as ferramentas do kit</strong>
+          O catálogo completo, por área. Clique em <em>copiar prompt</em> e cole no Claude — o resultado volta salvo na área correspondente.
+        </div>
+      </div>
+      <div class="card full">
+        <div class="card-body">
+          <div class="tools-grid lg" id="tools-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: OUTPUTS -->
+    <div class="page" id="page-outputs">
+      <div class="filter-bar" id="output-filters">
+        <div class="filter-chip on" data-fcat="todos">Todos</div>
+        <div class="filter-chip" data-fcat="criar-anuncio">Anúncios</div>
+        <div class="filter-chip" data-fcat="mes-de-conteudo">Calendários</div>
+        <div class="filter-chip" data-fcat="proposta-comercial">Propostas</div>
+        <div class="filter-chip" data-fcat="legenda-no-tom">Legendas</div>
+        <div class="filter-chip" data-fcat="respostas-cliente">Respostas</div>
+        <div class="filter-chip" data-fcat="pesquisa-de-mercado">Pesquisas</div>
+        <div class="filter-chip" data-fcat="resumir-documento">Documentos</div>
+      </div>
+      <div class="card full">
+        <div class="card-body">
+          <div class="output-list" id="outputs-full"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: MEU NEGÓCIO -->
+    <div class="page" id="page-negocio">
+      <div class="card full mb">
+        <div class="card-head"><div class="card-title">Perfil do negócio</div></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="field"><label>Nome da empresa</label><input id="f-empresa" type="text" placeholder="Ex.: Studio Clara Moda"></div>
+            <div class="field"><label>Segmento</label><input id="f-segmento" type="text" placeholder="Ex.: Moda feminina, Consultoria financeira"></div>
+            <div class="field form-grid single"><label>Cliente ideal</label><input id="f-cliente" type="text" placeholder="Ex.: Mulheres 30-45, donas de pequenos negócios"></div>
+            <div class="field"><label>Tom de voz</label><input id="f-tom" type="text" placeholder="Ex.: Próximo, sem juridiquês, com bom humor"></div>
+            <div class="field"><label>Principal diferencial</label><input id="f-diferencial" type="text" placeholder="Ex.: Atendimento personalizado + entrega em 24h"></div>
+          </div>
+          <div class="form-grid" style="margin-top:14px">
+            <div class="field"><label>Site</label><input id="f-site" type="url" placeholder="https://"></div>
+            <div class="field"><label>Instagram</label><input id="f-instagram" type="text" placeholder="@seuarrobado"></div>
+          </div>
+          <div class="form-grid single" style="margin-top:14px">
+            <div class="field"><label>Produtos / Serviços principais</label><textarea id="f-produtos" placeholder="Liste os produtos ou serviços que você mais vende…"></textarea></div>
+          </div>
+          <div class="form-grid single" style="margin-top:14px">
+            <div class="field"><label>Referências de estilo (marcas, posts que admira)</label><textarea id="f-referencias" placeholder="Ex.: @conta1 pelo tom, @conta2 pelo visual…"></textarea></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-gold" onclick="savePerfil()">Salvar perfil</button>
+            <span class="save-ok" id="save-ok"><svg class="ic"><use href="#i-check"/></svg>Salvo com sucesso</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+  <div class="bbar"></div>
+</div><!-- /main -->
+
+<!-- OUTPUT MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="modal-title">Output</div>
+      <div class="modal-close" onclick="closeModalDirect()">×</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-content" id="modal-content"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModalDirect()">Fechar</button>
+      <button class="btn btn-outline" id="out-agendar"><svg class="ic"><use href="#i-calendar-plus"/></svg>Adicionar ao calendário</button>
+      <button class="btn btn-gold" onclick="copyModal()">Copiar conteúdo</button>
+    </div>
+  </div>
+</div>
+
+<!-- POST DETAIL MODAL (calendário) -->
+<div class="modal-bg" id="post-modal-bg" onclick="closePostModal(event)">
+  <div class="modal" style="width:720px">
+    <div class="modal-head">
+      <div class="modal-title" id="pd-title">Post</div>
+      <div class="modal-close" onclick="closePostModalDirect()">×</div>
+    </div>
+    <div class="modal-body" id="pd-body"></div>
+  </div>
+</div>
+
+<!-- RESPOSTA MODAL (Atender) -->
+<div class="modal-bg" id="resp-modal-bg" onclick="closeResp(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title" id="resp-title">Resposta</div>
+      <div class="modal-close" onclick="closeRespDirect()">×</div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-content" id="resp-content"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="copyRespPrompt()"><svg class="ic"><use href="#i-zap"/></svg>Gerar outra versão</button>
+      <button class="btn btn-gold" onclick="copyRespWhats()"><svg class="ic"><use href="#i-chat"/></svg>Copiar pro WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<!-- GALERIA MODAL (Mercado / Documentos) -->
+<div class="modal-bg" id="gal-modal-bg" onclick="closeGal(event)">
+  <div class="modal" style="width:760px">
+    <div class="modal-head">
+      <div>
+        <div class="modal-title" id="gal-title">Resultado</div>
+        <div class="gal-modal-sub" id="gal-sub"></div>
+      </div>
+      <div class="modal-close" onclick="closeGalDirect()">×</div>
+    </div>
+    <div class="modal-body">
+      <div class="md" id="gal-content"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="copyGalConteudo()"><svg class="ic"><use href="#i-copy"/></svg>Copiar texto</button>
+      <button class="btn btn-outline" onclick="copyGalPrompt()"><svg class="ic"><use href="#i-zap"/></svg>Copiar prompt para nova versão</button>
+      <button class="btn btn-outline" id="gal-agendar" onclick="abrirAgendar(galCurrent && galCurrent.output.id)"><svg class="ic"><use href="#i-calendar-plus"/></svg>Adicionar ao calendário</button>
+      <button class="btn btn-gold" onclick="downloadGalPdf()"><svg class="ic"><use href="#i-download"/></svg>Baixar PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- AGENDAR NO CALENDÁRIO MODAL -->
+<div class="modal-bg" id="ag-modal-bg" onclick="closeAgendar(event)">
+  <div class="modal" style="width:520px">
+    <div class="modal-head">
+      <div class="modal-title">Adicionar ao calendário de conteúdo</div>
+      <div class="modal-close" onclick="closeAgendarDirect()">×</div>
+    </div>
+    <div class="modal-body">
+      <div class="ag-target" id="ag-target"></div>
+      <div class="ag-form">
+        <div class="field"><label for="ag-dia">Dia</label><select id="ag-dia" onchange="agAtualizaPreview()"></select></div>
+        <div class="field"><label for="ag-mes">Mês</label><select id="ag-mes" onchange="agMesTrocado()"></select></div>
+      </div>
+      <div class="ag-preview" id="ag-preview"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" id="ag-remover" onclick="removerAgendamentoAtual()"><svg class="ic"><use href="#i-trash"/></svg>Remover do calendário</button>
+      <button class="btn btn-outline" onclick="closeAgendarDirect()">Cancelar</button>
+      <button class="btn btn-gold" id="ag-salvar" onclick="salvarAgendamento()"><svg class="ic"><use href="#i-calendar-plus"/></svg>Adicionar ao calendário</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:5432/api';
+
+// ── FERRAMENTAS DATA ─────────────────────────────────────────────────────
+const TOOLS = [
+  {id:'configurar-negocio', icon:'settings',  name:'Configurar negócio', desc:'Monta a base que todas as ferramentas usam', cat:'base', tag:'t-base', tagLabel:'Base', prompt:'configurar meu negócio'},
+  {id:'mes-de-conteudo',    icon:'calendar',  name:'Mês de conteúdo',    desc:'Calendário de 4 semanas de posts',           cat:'conteudo', tag:'t-c', tagLabel:'Conteúdo', prompt:'gerar o mês de conteúdo'},
+  {id:'legenda-no-tom',     icon:'pencil',    name:'Legenda no meu tom', desc:'Texto do post no estilo da marca',           cat:'conteudo', tag:'t-c', tagLabel:'Conteúdo', prompt:'escrever legenda no meu tom'},
+  {id:'roteiro-de-reels',   icon:'film',      name:'Roteiro de Reels',   desc:'Passo a passo de vídeo curto',               cat:'conteudo', tag:'t-c', tagLabel:'Conteúdo', prompt:'criar roteiro de reels'},
+  {id:'descricao-de-design',icon:'palette',   name:'Descrição de design',desc:'Design system ou briefing visual de um post', cat:'conteudo', tag:'t-c', tagLabel:'Conteúdo', prompt:'descrição de design'},
+  {id:'criar-anuncio',      icon:'megaphone', name:'Criar anúncio',      desc:'PAS, AIDA e versão curta para tráfego pago', cat:'vender',   tag:'t-v', tagLabel:'Vender',   prompt:'criar anúncio'},
+  {id:'proposta-comercial', icon:'handshake', name:'Proposta comercial', desc:'De itens soltos a proposta que vende',       cat:'vender',   tag:'t-v', tagLabel:'Vender',   prompt:'montar proposta comercial'},
+  {id:'respostas-cliente',  icon:'chat',      name:'Respostas de cliente',desc:'Banco de respostas prontas pro WhatsApp',   cat:'atender',  tag:'t-a', tagLabel:'Atender',  prompt:'banco de respostas de cliente'},
+  {id:'pesquisa-de-mercado',icon:'search',    name:'Pesquisa de mercado',desc:'Relatório de concorrentes e decisões acionáveis', cat:'mercado', tag:'t-m', tagLabel:'Mercado', prompt:'pesquisa de mercado'},
+  {id:'resumir-documento',  icon:'file',      name:'Resumir documento',  desc:'Resumo e pontos de atenção de contratos',   cat:'docs',     tag:'t-d', tagLabel:'Documentos', prompt:'resumir documento'},
+];
+
+const TOOL_ICON_BG = {conteudo:'#e8f4fd',vender:'#fff0e0',atender:'#e8f7ee',mercado:'#f5f0ff',docs:'#fdf3d9',base:'#e0e8f0'};
+const TOOL_ICON_FG = {conteudo:'#1a6ea8',vender:'#b06000',atender:'#2a7a4f',mercado:'#6020a0',docs:'#8a6010',base:'#013B6B'};
+
+// Helper: gera SVG do sprite pelo nome (fallback: file)
+function icon(name){return `<svg class="ic"><use href="#i-${name||'file'}"/></svg>`;}
+
+// ── NAVEGAÇÃO ────────────────────────────────────────────────────────────
+const PAGE_TITLES = {inicio:'Visão geral', progresso:'Meu progresso', conteudo:'Conteúdo', vender:'Vender', ferramentas:'Todas as áreas', atender:'Atender clientes', mercado:'Pesquisas de mercado', documentos:'Documentos resumidos', outputs:'Outputs salvos', negocio:'Meu negócio'};
+
+// ── ÁREAS ────────────────────────────────────────────────────────────────
+// Cada área tem a mesma estrutura: chips de navegação em cima, galeria /
+// calendário no meio e os CTAs de "copiar prompt" embaixo.
+const AREAS = [
+  {page:'ferramentas', label:'Todas',      icon:'grid',     cat:'todos'},
+  {page:'conteudo',    label:'Conteúdo',   icon:'calendar', cat:'conteudo', badge:'sb-conteudo-count'},
+  {page:'vender',      label:'Vender',     icon:'dollar',   cat:'vender',   badge:'sb-vender-count'},
+  {page:'atender',     label:'Atender',    icon:'chat',     cat:'atender',  badge:'sb-atender-count'},
+  {page:'mercado',     label:'Mercado',    icon:'search',   cat:'mercado',  badge:'sb-mercado-count'},
+  {page:'documentos',  label:'Documentos', icon:'file',     cat:'docs',     badge:'sb-documentos-count'},
+];
+const AREA_MAP = Object.fromEntries(AREAS.map(a => [a.page, a]));
+const AREA_BY_CAT = Object.fromEntries(AREAS.map(a => [a.cat, a]));
+
+// Página da área correspondente a uma categoria de ferramenta
+function areaPageForCat(cat){ return (AREA_BY_CAT[cat] || AREA_MAP.ferramentas).page; }
+
+// Chips de navegação entre áreas (topo de toda área)
+function areaNavHtml(active){
+  return AREAS.map(a => {
+    const n = a.badge ? (document.getElementById(a.badge)?.textContent || '') : '';
+    const cnt = (n && n !== '0') ? `<span class="n">${n}</span>` : '';
+    return `<div class="area-chip${a.page===active?' on':''}" onclick="nav('${a.page}')">${icon(a.icon)} ${a.label}${cnt}</div>`;
+  }).join('');
+}
+
+// CTAs de "copiar prompt" das ferramentas da área (rodapé de toda área)
+function areaCtaHtml(cat){
+  const list = TOOLS.filter(t => t.cat === cat || (cat === 'conteudo' && t.cat === 'base'));
+  if (!list.length) return '';
+  // áreas que geram material publicável ganham a dica do calendário
+  const dicaAgenda = list.some(t => agendavel(t.id))
+    ? `<div class="hint">${icon('calendar-plus')}Depois que o material aparecer aqui, use <strong>adicionar ao calendário</strong> — no card ou dentro dele — para marcar o dia e o mês da publicação.</div>`
+    : '';
+  return `<div class="card full">
+    <div class="card-head">
+      <div class="card-title">${icon('zap')} Criar algo novo nesta área</div>
+      <div class="card-act" onclick="nav('ferramentas')">ver todas as ferramentas →</div>
+    </div>
+    <div class="card-body">
+      <div class="tools-grid lg">${list.map(t => toolCard(t,true)).join('')}</div>
+      <div class="hint">${icon('copy')}Clique em <strong>copiar prompt</strong> e cole no Claude — o resultado volta salvo aqui automaticamente.</div>
+      ${dicaAgenda}
+    </div>
+  </div>`;
+}
+
+// Monta chips + CTAs da área aberta
+function renderAreaChrome(page){
+  const a = AREA_MAP[page];
+  if (!a) return;
+  const navEl = document.getElementById('area-nav-'+page);
+  if (navEl) navEl.innerHTML = areaNavHtml(page);
+  const cta = document.getElementById('area-cta-'+page);
+  if (cta) cta.innerHTML = areaCtaHtml(a.cat);
+}
+
+let currentPage = 'inicio';
+
+function nav(page, cat) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.ni[data-page="'+page+'"]').forEach(n => {
+    if (!cat || n.dataset.cat === cat) n.classList.add('on');
+  });
+  if (page === 'inicio' && !cat) document.querySelector('.ni[data-page="inicio"]').classList.add('on');
+  document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
+  currentPage = page;
+  renderAreaChrome(page);
+  if (page === 'progresso') loadProgresso();
+  if (page === 'conteudo') loadConteudo();
+  if (page === 'vender') loadGaleria('vender');
+  if (page === 'ferramentas') renderToolsFull();
+  if (page === 'atender') loadAtender();
+  if (page === 'mercado') loadGaleria('mercado');
+  if (page === 'documentos') loadGaleria('documentos');
+  if (page === 'outputs') loadOutputsFull();
+  if (page === 'negocio') loadPerfil();
+}
+
+document.querySelectorAll('.ni[data-page]').forEach(ni => {
+  ni.addEventListener('click', () => nav(ni.dataset.page, ni.dataset.cat));
+});
+
+// ── RENDER TOOLS ─────────────────────────────────────────────────────────
+function toolCard(t, showPrompt=true) {
+  // mesma cor de acento usada na home, para a ferramenta ser reconhecida em qualquer tela
+  const a = accent(t);
+  return `<div class="tc" style="--ac:${a.c};--ac-rgb:${hexRgb(a.c)}" onclick="copyPrompt('${t.prompt}','${t.name}')">
+    <div class="tc-ic" style="background:rgba(${hexRgb(a.c)},.15);color:${a.c}">${icon(t.icon)}</div>
+    <div>
+      <div class="tc-name">${t.name}</div>
+      <div class="tc-desc">${t.desc}</div>
+      <div class="tc-foot">
+        <span class="tag ${t.tag}">${t.tagLabel}</span>
+        ${showPrompt ? `<button class="prompt-btn" onclick="event.stopPropagation();copyPrompt('${t.prompt}','${t.name}')">copiar prompt</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── HOME: HERO CARROSSEL + TRILHAS ESTILO NETFLIX ────────────────────────
+// Fotos temáticas (tratamento duotone azul/dourado aplicado via CSS)
+const NFX_PHOTO = {
+  'configurar-negocio': 'img/base.jpg',
+  'mes-de-conteudo':    'img/calendario.jpg',
+  'legenda-no-tom':     'img/escrita.jpg',
+  'roteiro-de-reels':   'img/video.jpg',
+  'descricao-de-design':'img/design.jpg',
+  'criar-anuncio':      'img/anuncio.jpg',
+  'proposta-comercial': 'img/proposta.jpg',
+  'respostas-cliente':  'img/atendimento.jpg',
+  'pesquisa-de-mercado':'img/mercado.jpg',
+  'resumir-documento':  'img/documento.jpg',
+};
+
+// Cor de acento por ferramenta — sinalização visual para o usuário não confundir
+// uma ferramenta com a outra. ink = cor do texto/ícone sobre o acento.
+const TOOL_ACCENT = {
+  'configurar-negocio': {c:'#7E8CA0', ink:'#0b1a2b'}, // grafite azulado (base)
+  'mes-de-conteudo':    {c:'#17A398', ink:'#04211f'}, // teal
+  'legenda-no-tom':     {c:'#4C7DF0', ink:'#04142e'}, // azul elétrico
+  'roteiro-de-reels':   {c:'#E0457B', ink:'#2b0512'}, // rosa
+  'descricao-de-design':{c:'#8E5CF7', ink:'#150331'}, // violeta
+  'criar-anuncio':      {c:'#F2762E', ink:'#2b1004'}, // laranja
+  'proposta-comercial': {c:'#2FA84F', ink:'#04210d'}, // verde
+  'respostas-cliente':  {c:'#17B0C9', ink:'#02222a'}, // ciano
+  'pesquisa-de-mercado':{c:'#F0B429', ink:'#2b1e02'}, // âmbar
+  'resumir-documento':  {c:'#B0603F', ink:'#fff'},    // terracota
+};
+const ACCENT_FALLBACK = {c:'#C1A44F', ink:'#013B6B'};
+
+function hexRgb(hex) {
+  const h = hex.replace('#','');
+  return [0,2,4].map(i => parseInt(h.slice(i,i+2),16)).join(',');
+}
+
+function accent(t) { return TOOL_ACCENT[t.id] || ACCENT_FALLBACK; }
+
+// Variáveis CSS do acento, aplicadas na raiz do card / slide
+function accentVars(t) {
+  const a = accent(t);
+  return `--ac:${a.c};--ac-rgb:${hexRgb(a.c)};--ac-ink:${a.ink}`;
+}
+
+// Camadas de foto: duotone azul da marca + cor de acento da ferramenta
+function nfxPhoto(t) {
+  const src = NFX_PHOTO[t.id] || 'img/base.jpg';
+  return `<div class="nfx-shot" style="background-image:url('${src}')"></div>
+    <div class="nfx-tint"></div><div class="nfx-sheen"></div><div class="nfx-scrim"></div>`;
+}
+
+const NFX_ROWS = [
+  {title:'Conteúdo e redes',       cats:['conteudo']},
+  {title:'Vender mais',            cats:['vender']},
+  {title:'Atender e organizar',    cats:['atender','docs']},
+  {title:'Estratégia e base',      cats:['mercado','base']},
+];
+
+// Ferramentas do carrossel gigante
+const NFX_HERO = ['mes-de-conteudo','criar-anuncio','legenda-no-tom','pesquisa-de-mercado','proposta-comercial','roteiro-de-reels'];
+
+const NFX_HERO_PITCH = {
+  'mes-de-conteudo':    'Um calendário de 4 semanas pronto para publicar — educar, inspirar, vender e conectar, tudo equilibrado e na voz do seu negócio.',
+  'criar-anuncio':      'Anúncios em estruturas de copy que já provaram vender (PAS e AIDA), com versão curta para tráfego pago.',
+  'legenda-no-tom':     'Gancho, corpo, chamada para ação e hashtags — a legenda sai escrita no tom da sua marca, não em texto genérico de IA.',
+  'pesquisa-de-mercado':'Entenda como seus concorrentes comunicam e cobram, onde estão as brechas e o que fazer com essa informação.',
+  'proposta-comercial': 'De escopo, prazo e valor soltos para uma proposta profissional que justifica o preço e fecha negócio.',
+  'roteiro-de-reels':   'O passo a passo do vídeo curto: o que falar, o que mostrar e em que ordem, cena por cena.',
+};
+
+function nfxCard(t) {
+  const p = t.prompt.replace(/'/g,"\\'");
+  return `<div class="nfx-card" style="${accentVars(t)}" onclick="copyPrompt('${p}','${t.name}')" title="${t.desc}">
+    ${nfxPhoto(t)}
+    <div class="nfx-card-ic">${icon(t.icon)}</div>
+    <span class="nfx-card-tag">${t.tagLabel}</span>
+    <div class="nfx-card-body">
+      <div class="nfx-card-name">${t.name}</div>
+      <div class="nfx-card-desc">${t.desc}</div>
+      <button class="nfx-card-cta" onclick="event.stopPropagation();copyPrompt('${p}','${t.name}')">${icon('copy')} usar agora</button>
+    </div>
+  </div>`;
+}
+
+const NFX_CHEV = d => `<svg viewBox="0 0 24 24"><polyline points="${d==='l'?'15 18 9 12 15 6':'9 18 15 12 9 6'}"/></svg>`;
+
+function nfxRow(row, i) {
+  const list = row.ids
+    ? row.ids.map(id => TOOL_MAP_NFX[id]).filter(Boolean)
+    : TOOLS.filter(t => row.cats.includes(t.cat));
+  if (!list.length) return '';
+  return `<div class="nfx-row">
+    <div class="nfx-row-head">
+      <div class="nfx-row-title">${row.title}</div>
+      <div class="nfx-row-count">${list.length} ${list.length===1?'ferramenta':'ferramentas'}</div>
+    </div>
+    <div class="nfx-rail">
+      <button class="nfx-arrow l" onclick="nfxScroll(${i},-1)" aria-label="anterior">${NFX_CHEV('l')}</button>
+      <div class="nfx-track" id="nfx-track-${i}">${list.map(nfxCard).join('')}</div>
+      <button class="nfx-arrow r" onclick="nfxScroll(${i},1)" aria-label="próxima">${NFX_CHEV('r')}</button>
+    </div>
+  </div>`;
+}
+
+function nfxScroll(i, dir) {
+  const el = document.getElementById('nfx-track-'+i);
+  if (el) el.scrollBy({left: dir * Math.max(220, el.clientWidth * 0.8), behavior:'smooth'});
+}
+
+const TOOL_MAP_NFX = Object.fromEntries(TOOLS.map(t => [t.id, t]));
+
+// ── HERO CARROSSEL ───────────────────────────────────────────────────────
+let heroIdx = 0, heroTimer = null;
+const HERO_LIST = NFX_HERO.map(id => TOOL_MAP_NFX[id]).filter(Boolean);
+
+function heroSlide(t, i) {
+  const p = t.prompt.replace(/'/g,"\\'");
+  const pitch = NFX_HERO_PITCH[t.id] || t.desc;
+  return `<div class="hs${i===0?' on':''}" style="${accentVars(t)}" data-i="${i}">
+    ${nfxPhoto(t)}
+    <div class="hs-body">
+      <div class="hs-eyebrow">
+        <span class="hs-mark">${icon(t.icon)}</span>
+        <span class="hs-badge">${icon('zap')} em destaque</span>
+        <span class="hs-cat">${t.tagLabel}</span>
+      </div>
+      <div class="hs-title">${t.name}</div>
+      <div class="hs-desc">${pitch}</div>
+      <div class="hs-acts">
+        <button class="hs-btn pri" onclick="copyPrompt('${p}','${t.name}')">${icon('copy')} usar agora</button>
+        <button class="hs-btn sec" onclick="nav('${areaPageForCat(t.cat)}')">${icon('search')} ver a área ${t.tagLabel.toLowerCase()}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderHero() {
+  const el = document.getElementById('nfx-hero');
+  if (!el || !HERO_LIST.length) return;
+  el.innerHTML = HERO_LIST.map(heroSlide).join('')
+    + `<button class="hero-arrow l" onclick="heroGo(heroIdx-1)" aria-label="anterior">${NFX_CHEV('l')}</button>
+       <button class="hero-arrow r" onclick="heroGo(heroIdx+1)" aria-label="próxima">${NFX_CHEV('r')}</button>
+       <div class="hero-dots">${HERO_LIST.map((t,i)=>`<div class="hero-dot${i===0?' on':''}" style="--dot-ac:${accent(t).c}" title="${t.name}" onclick="heroGo(${i})"></div>`).join('')}</div>`;
+  heroIdx = 0;
+  heroPlay();
+  el.addEventListener('mouseenter', heroStop);
+  el.addEventListener('mouseleave', heroPlay);
+}
+
+function heroGo(i) {
+  const slides = document.querySelectorAll('#nfx-hero .hs');
+  const dots = document.querySelectorAll('#nfx-hero .hero-dot');
+  if (!slides.length) return;
+  heroIdx = (i + slides.length) % slides.length;
+  slides.forEach((s,n) => s.classList.toggle('on', n === heroIdx));
+  dots.forEach((d,n) => d.classList.toggle('on', n === heroIdx));
+  heroPlay();
+}
+
+function heroPlay() { heroStop(); heroTimer = setInterval(() => heroGo(heroIdx+1), 7000); }
+function heroStop() { if (heroTimer) { clearInterval(heroTimer); heroTimer = null; } }
+
+function renderNetflixHome() {
+  renderHero();
+  document.getElementById('nfx-rows').innerHTML = NFX_ROWS.map(nfxRow).join('');
+}
+
+// Catálogo completo: todas as ferramentas do kit
+function renderToolsFull() {
+  const el = document.getElementById('tools-full');
+  if (el) el.innerHTML = TOOLS.map(t => toolCard(t,true)).join('');
+}
+
+// ── COPY PROMPT ──────────────────────────────────────────────────────────
+function copyPrompt(prompt, name) {
+  navigator.clipboard.writeText(prompt).then(() => toast(`Prompt copiado: "${prompt}"`));
+}
+
+// ── STATUS & KPI ─────────────────────────────────────────────────────────
+// setText: escreve só se o elemento existir (KPIs da home foram removidos)
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+async function loadStatus() {
+  try {
+    const r = await fetch(API+'/status');
+    const d = await r.json();
+    setText('kpi-outputs', d.total_outputs);
+    const pk = document.getElementById('kpi-perfil-ok');
+    if (pk) {
+      pk.innerHTML = d.perfil_ok ? 'Sim '+icon('check') : 'Não';
+      pk.style.color = d.perfil_ok ? 'var(--green)' : 'var(--muted)';
+    }
+    setText('sb-output-count', d.total_outputs);
+    if (d.pdf_ok !== undefined) pdfDisponivel = d.pdf_ok;
+    const ts = new Date(d.timestamp);
+    setText('last-update', ts.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}));
+  } catch(e) {
+    setText('kpi-outputs', '—');
+  }
+}
+
+// ── PERFIL ───────────────────────────────────────────────────────────────
+async function loadPerfil() {
+  try {
+    const r = await fetch(API+'/perfil');
+    const d = await r.json();
+    // KPI empresa (existe só em páginas que ainda usam KPI)
+    const emp = d.empresa || '';
+    const kpiEl = document.getElementById('kpi-empresa');
+    if (kpiEl) {
+      kpiEl.textContent = emp || 'não configurado';
+      kpiEl.style.color = emp ? 'var(--navy)' : 'var(--muted)';
+      kpiEl.style.fontFamily = emp ? "'Source Serif 4',serif" : "'Mulish',sans-serif";
+      kpiEl.style.fontSize = emp ? '18px' : '12px';
+    }
+    // Preview sidebar
+    const fields = [
+      {key:'Empresa', val:d.empresa},
+      {key:'Segmento', val:d.segmento},
+      {key:'Cliente',  val:d.cliente},
+      {key:'Tom',      val:d.tom},
+      {key:'Diferencial', val:d.diferencial},
+    ];
+    document.getElementById('perfil-preview').innerHTML = fields.map(f =>
+      `<div class="pf-row"><div class="pf-key">${f.key}</div><div class="pf-val ${f.val?'':'empty'}">${f.val||'—'}</div></div>`
+    ).join('');
+    // Form
+    document.getElementById('f-empresa').value    = d.empresa    || '';
+    document.getElementById('f-segmento').value   = d.segmento   || '';
+    document.getElementById('f-cliente').value    = d.cliente    || '';
+    document.getElementById('f-tom').value        = d.tom        || '';
+    document.getElementById('f-diferencial').value= d.diferencial|| '';
+    document.getElementById('f-site').value       = d.site       || '';
+    document.getElementById('f-instagram').value  = d.instagram  || '';
+    document.getElementById('f-produtos').value   = d.produtos   || '';
+    document.getElementById('f-referencias').value= d.referencias|| '';
+  } catch(e) {}
+}
+
+async function savePerfil() {
+  const data = {
+    empresa:     document.getElementById('f-empresa').value.trim(),
+    segmento:    document.getElementById('f-segmento').value.trim(),
+    cliente:     document.getElementById('f-cliente').value.trim(),
+    tom:         document.getElementById('f-tom').value.trim(),
+    diferencial: document.getElementById('f-diferencial').value.trim(),
+    site:        document.getElementById('f-site').value.trim(),
+    instagram:   document.getElementById('f-instagram').value.trim(),
+    produtos:    document.getElementById('f-produtos').value.trim(),
+    referencias: document.getElementById('f-referencias').value.trim(),
+  };
+  try {
+    await fetch(API+'/perfil', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    const ok = document.getElementById('save-ok');
+    ok.style.display='inline';
+    setTimeout(()=>ok.style.display='none',2500);
+    loadPerfil();
+    loadStatus();
+    toast('Perfil salvo com sucesso!');
+  } catch(e) { toast('Erro ao salvar — servidor está rodando?'); }
+}
+
+// ── OUTPUTS ──────────────────────────────────────────────────────────────
+const TOOL_MAP = Object.fromEntries(TOOLS.map(t=>[t.id,t]));
+
+function outputItem(o, withDel=true) {
+  const t = TOOL_MAP[o.ferramenta] || {};
+  const a = accent(t);
+  const dt = o.data ? new Date(o.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) : '—';
+  return `<div class="oi" onclick="openOutput('${o.id}')">
+    <div class="oi-icon" style="background:rgba(${hexRgb(a.c)},.15);color:${a.c}">${icon(t.icon)}</div>
+    <div class="oi-meta">
+      <div class="oi-name">${o.titulo||o.id}</div>
+      <div class="oi-date">${t.name||o.ferramenta} · ${dt}</div>
+    </div>
+    <span class="tag ${t.tag||''}">${t.tagLabel||''}</span>
+    ${withDel?`<div class="oi-del" onclick="event.stopPropagation();delOutput('${o.id}')">${icon('trash')}</div>`:''}
+  </div>`;
+}
+
+async function loadOutputsHome() {
+  try {
+    const r = await fetch(API+'/outputs');
+    const list = await r.json();
+    const el = document.getElementById('outputs-home');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty"><span class="em">'+icon('inbox')+'</span>Nenhum output salvo ainda.<br>Use as ferramentas no Claude Cowork — os resultados aparecerão aqui.</div>';
+    } else {
+      el.innerHTML = list.slice(0,5).map(o=>outputItem(o,false)).join('');
+    }
+  } catch(e) {
+    document.getElementById('outputs-home').innerHTML = '<div class="empty"><span class="em">'+icon('alert')+'</span>Não foi possível carregar os outputs.</div>';
+  }
+}
+
+let outputFilterCat = 'todos';
+async function loadOutputsFull() {
+  try {
+    const url = outputFilterCat==='todos' ? API+'/outputs' : API+'/outputs?ferramenta='+outputFilterCat;
+    const r = await fetch(url);
+    const list = await r.json();
+    const el = document.getElementById('outputs-full');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty"><span class="em">'+icon('inbox')+'</span>Nenhum output aqui ainda.</div>';
+    } else {
+      el.innerHTML = list.map(o=>outputItem(o,true)).join('');
+    }
+  } catch(e) {}
+}
+
+document.querySelectorAll('.filter-chip[data-fcat]').forEach(c => {
+  c.addEventListener('click', () => {
+    outputFilterCat = c.dataset.fcat;
+    document.querySelectorAll('.filter-chip[data-fcat]').forEach(x=>x.classList.toggle('on',x===c));
+    loadOutputsFull();
+  });
+});
+
+async function delOutput(id) {
+  if (!confirm('Remover este output?')) return;
+  await fetch(API+'/outputs/'+id, {method:'DELETE'});
+  loadOutputsFull();
+  loadOutputsHome();
+  loadStatus();
+  toast('Output removido.');
+}
+
+// ── MODAL ────────────────────────────────────────────────────────────────
+let modalText = '';
+async function openOutput(id) {
+  try {
+    const r = await fetch(API+'/outputs/'+id);
+    const d = await r.json();
+    galCache[id] = d;
+    document.getElementById('modal-title').textContent = d.titulo || id;
+    const content = d.conteudo
+      ? (typeof d.conteudo === 'string' ? d.conteudo : JSON.stringify(d.conteudo, null, 2))
+      : '(sem conteúdo)';
+    modalText = content;
+    document.getElementById('modal-content').textContent = content;
+    // botão de calendário só para materiais publicáveis
+    const btn = document.getElementById('out-agendar');
+    if (btn) {
+      const ag = agendaPorOutput[id];
+      btn.style.display = agendavel(d.ferramenta) ? '' : 'none';
+      btn.onclick = () => abrirAgendar(id, d.titulo, d.ferramenta);
+      btn.innerHTML = `<svg class="ic"><use href="#i-calendar-plus"/></svg>`
+        + (ag ? `No calendário em ${agLabelCurto(ag.data)} — remarcar` : 'Adicionar ao calendário');
+    }
+    document.getElementById('modal-bg').classList.add('open');
+  } catch(e) { toast('Erro ao abrir output.'); }
+}
+
+function closeModal(e) { if (e.target.id==='modal-bg') closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modal-bg').classList.remove('open'); }
+function copyModal() {
+  navigator.clipboard.writeText(modalText).then(()=>toast('Conteúdo copiado!'));
+}
+
+// ── SEARCH ───────────────────────────────────────────────────────────────
+document.getElementById('global-search').addEventListener('input', function() {
+  const q = this.value.trim();
+  if (!q) return;
+  nav('outputs');
+  fetch(API+'/outputs?busca='+encodeURIComponent(q))
+    .then(r=>r.json())
+    .then(list=>{
+      const el = document.getElementById('outputs-full');
+      el.innerHTML = list.length ? list.map(o=>outputItem(o,true)).join('') : '<div class="empty"><span class="em">'+icon('search')+'</span>Nenhum resultado para "'+q+'".</div>';
+    });
+});
+
+// ── TOAST ────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2800);
+}
+
+// ── ATENDER: GALERIA DE RESPOSTAS ────────────────────────────────────────
+let atenderCache = {};
+let atenderCurrent = null;
+
+function contentToText(c){ return (typeof c === 'string' ? c : (c ? JSON.stringify(c, null, 2) : '')); }
+
+async function loadAtender(){
+  const wrap = document.getElementById('atd-gallery');
+  wrap.innerHTML = '<div class="empty"><span class="em">'+icon('chat')+'</span>Carregando respostas…</div>';
+  try{
+    const list = await (await fetch(API+'/outputs?ferramenta=respostas-cliente')).json();
+    const cnt = document.getElementById('sb-atender-count');
+    if (cnt) cnt.textContent = list.length;
+    if(!list.length){ renderAtenderEmpty(wrap); return; }
+    // busca o conteúdo completo de cada resposta (preview no card + modal instantâneo)
+    const full = await Promise.all(list.map(async o => {
+      try { const d = await (await fetch(API+'/outputs/'+o.id)).json(); atenderCache[o.id] = d; return d; }
+      catch(e){ return o; }
+    }));
+    renderAtenderGallery(wrap, full);
+  }catch(e){
+    wrap.innerHTML = '<div class="empty"><span class="em">'+icon('alert')+'</span>Não foi possível carregar as respostas.</div>';
+  }
+}
+
+function renderAtenderGallery(wrap, list){
+  const cards = list.map(o => {
+    const dt = o.data ? new Date(o.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
+    const preview = esc(contentToText(o.conteudo).replace(/\s+/g,' ').trim()) || 'Sem conteúdo.';
+    return `<div class="gal-card" onclick="openResposta('${o.id}')">
+      <div class="gal-del" title="Remover" onclick="event.stopPropagation();delResposta('${o.id}')">${icon('trash')}</div>
+      <div class="gal-head">
+        <div class="gal-ic">${icon('chat')}</div>
+        <div class="gal-title">${esc(o.titulo||o.id)}</div>
+      </div>
+      <div class="gal-preview">${preview}</div>
+      <div class="gal-foot"><span class="tag t-a">Atender</span><span class="gal-date">${dt}</span></div>
+    </div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="gal-grid">${cards}</div>`;
+}
+
+function renderAtenderEmpty(wrap){
+  wrap.innerHTML = `<div class="card full"><div class="card-body">
+    <div class="empty">
+      <span class="em">${icon('chat')}</span>
+      Você ainda não salvou nenhuma resposta padrão.<br>
+      Peça ao Claude um "banco de respostas de cliente" e elas aparecem aqui automaticamente.
+      <div class="empty-hint">Use os botões de <strong>copiar prompt</strong> abaixo para criar o primeiro.</div>
+    </div></div></div>`;
+}
+
+async function openResposta(id){
+  let d = atenderCache[id];
+  try{ if(!d){ d = await (await fetch(API+'/outputs/'+id)).json(); atenderCache[id] = d; } }
+  catch(e){ toast('Erro ao abrir resposta.'); return; }
+  atenderCurrent = d;
+  document.getElementById('resp-title').textContent = d.titulo || id;
+  document.getElementById('resp-content').textContent = contentToText(d.conteudo) || '(sem conteúdo)';
+  document.getElementById('resp-modal-bg').classList.add('open');
+}
+
+function closeResp(e){ if(e.target.id==='resp-modal-bg') closeRespDirect(); }
+function closeRespDirect(){ document.getElementById('resp-modal-bg').classList.remove('open'); }
+
+function copyRespWhats(){
+  if(!atenderCurrent) return;
+  navigator.clipboard.writeText(contentToText(atenderCurrent.conteudo)).then(()=>toast('Resposta copiada — cole no WhatsApp'));
+}
+
+function copyRespPrompt(){
+  if(!atenderCurrent) return;
+  const t = atenderCurrent.titulo || 'respostas de cliente';
+  const prompt = `gerar uma nova versão do banco de respostas de cliente "${t}"`;
+  navigator.clipboard.writeText(prompt).then(()=>toast('Prompt copiado — cole no Claude para gerar outra versão'));
+}
+
+async function delResposta(id){
+  if(!confirm('Remover esta resposta salva?')) return;
+  await fetch(API+'/outputs/'+id, {method:'DELETE'});
+  delete atenderCache[id];
+  loadAtender();
+  loadStatus();
+  toast('Resposta removida.');
+}
+
+// ── GALERIAS (VENDER / MERCADO / DOCUMENTOS) ─────────────────────────────
+const GALERIAS = {
+  vender: {
+    ferramentas: ['criar-anuncio','proposta-comercial'],  // galeria de área: junta as duas
+    wrap:  'vender-gallery',
+    badge: 'sb-vender-count',
+    icon:  'megaphone',
+    icClass: 'v',
+    tag:   't-v',
+    tagLabel: 'Vender',
+    label: 'material de venda',
+    contagem: n => n === 1 ? '1 material de venda salvo' : `${n} materiais de venda salvos`,
+    promptNovo: 'criar anúncio',
+    promptVersao: t => `gerar uma nova versão de "${t}" — mantenha a estrutura de copy e melhore o gancho e a chamada para ação`,
+    vazio: 'Você ainda não tem anúncios ou propostas salvos.<br>Peça um "criar anúncio" ou uma "proposta comercial" ao Claude e eles aparecem aqui automaticamente.',
+    ctaVazio: 'Copiar prompt para criar um anúncio',
+  },
+  mercado: {
+    ferramenta: 'pesquisa-de-mercado',
+    wrap:  'mercado-gallery',
+    badge: 'sb-mercado-count',
+    icon:  'search',
+    icClass: 'm',
+    tag:   't-m',
+    tagLabel: 'Mercado',
+    label: 'pesquisa de mercado',
+    contagem: n => n === 1 ? '1 pesquisa salva' : `${n} pesquisas salvas`,
+    promptNovo: 'pesquisa de mercado',
+    promptVersao: t => `gerar uma nova versão da pesquisa de mercado "${t}" — revise os concorrentes, atualize as oportunidades e traga novas decisões acionáveis`,
+    vazio: 'Você ainda não tem nenhuma pesquisa de mercado salva.<br>Peça uma "pesquisa de mercado" ao Claude e ela aparece aqui automaticamente.',
+    ctaVazio: 'Copiar prompt para pesquisar o mercado',
+  },
+  documentos: {
+    ferramenta: 'resumir-documento',
+    wrap:  'documentos-gallery',
+    badge: 'sb-documentos-count',
+    icon:  'file',
+    icClass: 'd',
+    tag:   't-d',
+    tagLabel: 'Documentos',
+    label: 'resumo de documento',
+    contagem: n => n === 1 ? '1 documento resumido' : `${n} documentos resumidos`,
+    promptNovo: 'resumir documento',
+    promptVersao: t => `gerar uma nova versão do resumo do documento "${t}" — reescreva em linguagem ainda mais simples e destaque os pontos de atenção`,
+    vazio: 'Você ainda não resumiu nenhum documento.<br>Peça ao Claude para "resumir documento" e o resumo aparece aqui automaticamente.',
+    ctaVazio: 'Copiar prompt para resumir um documento',
+  },
+};
+
+/** Renderiza o markdown leve gerado pelas skills (títulos, listas, tabelas,
+ *  negrito, citação). Todo texto é escapado antes de virar HTML. */
+function renderMarkdown(text){
+  const inline = s => esc(s)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*(?!\s)([^*]+?)(?<!\s)\*(?!\*)/g, '$1<em>$2</em>')
+    .replace(/`(.+?)`/g, '<code>$1</code>');
+  const isSep = l => /^[\s|:-]+$/.test(l) && l.includes('-');
+  const cells = l => l.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(c=>c.trim());
+
+  const lines = (text||'').replace(/\r\n/g,'\n').split('\n');
+  let html = '', list = null;
+  const closeList = () => { if(list){ html += `</${list}>`; list = null; } };
+
+  for(let i=0; i<lines.length; i++){
+    const line = lines[i].trim();
+
+    if(!line){ closeList(); continue; }
+
+    // tabela
+    if(line.startsWith('|') && line.includes('|', 1)){
+      closeList();
+      const rows = [];
+      while(i < lines.length && lines[i].trim().startsWith('|')){
+        const cur = lines[i].trim();
+        if(!isSep(cur)) rows.push(cells(cur));
+        i++;
+      }
+      i--;
+      if(rows.length){
+        const head = rows[0], body = rows.slice(1);
+        html += '<div class="md-tablewrap"><table><thead><tr>'
+             +  head.map(c=>`<th>${inline(c)}</th>`).join('')
+             +  '</tr></thead><tbody>'
+             +  body.map(r=>'<tr>'+head.map((_,k)=>`<td>${inline(r[k]||'')}</td>`).join('')+'</tr>').join('')
+             +  '</tbody></table></div>';
+      }
+      continue;
+    }
+
+    if(/^(-{3,}|_{3,}|\*{3,})$/.test(line)){ closeList(); html += '<hr>'; continue; }
+
+    let m = line.match(/^(#{1,6})\s+(.*)$/);
+    if(m){ closeList(); const h = Math.min(3, m[1].length); html += `<h${h}>${inline(m[2])}</h${h}>`; continue; }
+
+    if(line.startsWith('>')){ closeList(); html += `<blockquote>${inline(line.replace(/^>\s?/,''))}</blockquote>`; continue; }
+
+    m = line.match(/^[-*•]\s+(.*)$/);
+    if(m){ if(list!=='ul'){ closeList(); html += '<ul>'; list='ul'; } html += `<li>${inline(m[1])}</li>`; continue; }
+
+    m = line.match(/^\d+[.)]\s+(.*)$/);
+    if(m){ if(list!=='ol'){ closeList(); html += '<ol>'; list='ol'; } html += `<li>${inline(m[1])}</li>`; continue; }
+
+    closeList();
+    html += `<p>${inline(line)}</p>`;
+  }
+  closeList();
+  return html || '<p>(sem conteúdo)</p>';
+}
+
+const galCache = {};      // id -> output completo
+let galCurrent = null;    // {key, output}
+let pdfDisponivel = true; // atualizado pelo /api/status
+
+/** Busca os outputs da galeria — aceita uma ferramenta ou várias (galeria de área). */
+async function galFetch(cfg){
+  const ferrs = cfg.ferramentas || [cfg.ferramenta];
+  const lists = await Promise.all(ferrs.map(async f =>
+    await (await fetch(API+'/outputs?ferramenta='+f)).json()
+  ));
+  return lists.flat().sort((a,b) => new Date(b.data||0) - new Date(a.data||0));
+}
+
+async function loadGaleria(key){
+  const cfg = GALERIAS[key];
+  const wrap = document.getElementById(cfg.wrap);
+  // só mostra "carregando" na primeira abertura — o auto-refresh troca o conteúdo em silêncio
+  if(!wrap.innerHTML.trim()) wrap.innerHTML = '<div class="empty"><span class="em">'+icon(cfg.icon)+'</span>Carregando…</div>';
+  try{
+    const list = await galFetch(cfg);
+    setBadge(cfg.badge, list.length);
+    if(!list.length){ renderGaleriaEmpty(wrap, cfg); return; }
+    // carrega o conteúdo completo (preview no card + abertura instantânea)
+    const full = await Promise.all(list.map(async o => {
+      try{ const d = await (await fetch(API+'/outputs/'+o.id)).json(); galCache[o.id]=d; return d; }
+      catch(e){ return o; }
+    }));
+    renderGaleria(wrap, cfg, key, full);
+  }catch(e){
+    wrap.innerHTML = '<div class="empty"><span class="em">'+icon('alert')+'</span>Não foi possível carregar. O servidor está rodando?</div>';
+  }
+}
+
+function renderGaleria(wrap, cfg, key, list){
+  const cards = list.map(o => {
+    const dt = o.data ? new Date(o.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'short'}) : '—';
+    const preview = esc(contentToText(o.conteudo).replace(/[#*|>`_-]+/g,' ').replace(/\s+/g,' ').trim()) || 'Sem conteúdo.';
+    // galeria de área (várias ferramentas): usa o ícone da ferramenta do output
+    const ic = (cfg.ferramentas && (TOOL_MAP[o.ferramenta]||{}).icon) || cfg.icon;
+    const ag = agendaPorOutput[o.id];
+    const podeAgendar = agendavel(o.ferramenta);
+    const btnAgendar = podeAgendar
+      ? `<button title="${ag?'Remarcar no calendário de conteúdo':'Adicionar ao calendário de conteúdo'}" onclick="event.stopPropagation();abrirAgendar('${o.id}')">${icon('calendar-plus')}</button>`
+      : '';
+    return `<div class="gal-card" onclick="openGal('${key}','${o.id}')">
+      <div class="gal-del" title="Remover" onclick="event.stopPropagation();delGal('${key}','${o.id}')">${icon('trash')}</div>
+      <div class="gal-head">
+        <div class="gal-ic ${cfg.icClass}">${icon(ic)}</div>
+        <div class="gal-title">${esc(o.titulo||o.id)}</div>
+      </div>
+      <div class="gal-preview">${preview}</div>
+      ${ag?`<div><span class="gal-sched">${icon('calendar')} no calendário · ${agLabelCurto(ag.data)}</span></div>`:''}
+      <div class="gal-foot">
+        <div class="gal-quick">
+          <button title="Baixar PDF" onclick="event.stopPropagation();baixarPdf('${o.id}')">${icon('download')}</button>
+          <button title="Copiar prompt para nova versão" onclick="event.stopPropagation();copyVersaoPrompt('${key}','${o.id}')">${icon('zap')}</button>
+          ${btnAgendar}
+        </div>
+        <span class="gal-date">${dt}</span>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.innerHTML = `<div class="gal-count">${cfg.contagem(list.length)}</div>
+    <div class="gal-grid">${cards}</div>`;
+}
+
+function renderGaleriaEmpty(wrap, cfg){
+  wrap.innerHTML = `<div class="card full"><div class="card-body">
+    <div class="empty">
+      <span class="em">${icon(cfg.icon)}</span>
+      ${cfg.vazio}
+      <div class="empty-hint">Use os botões de <strong>copiar prompt</strong> abaixo para criar o primeiro.</div>
+    </div></div></div>`;
+}
+
+async function openGal(key, id){
+  const cfg = GALERIAS[key];
+  let d = galCache[id];
+  try{ if(!d){ d = await (await fetch(API+'/outputs/'+id)).json(); galCache[id]=d; } }
+  catch(e){ toast('Erro ao abrir o resultado.'); return; }
+  galCurrent = {key, output:d};
+  const dt = d.data ? new Date(d.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+  document.getElementById('gal-title').textContent = d.titulo || id;
+  document.getElementById('gal-sub').textContent = `${cfg.tagLabel} · gerado em ${dt}`;
+  document.getElementById('gal-content').innerHTML = renderMarkdown(contentToText(d.conteudo));
+  atualizaBotaoAgendarModal();
+  document.getElementById('gal-modal-bg').classList.add('open');
+}
+
+function closeGal(e){ if(e.target.id==='gal-modal-bg') closeGalDirect(); }
+function closeGalDirect(){ document.getElementById('gal-modal-bg').classList.remove('open'); }
+
+function copyGalConteudo(){
+  if(!galCurrent) return;
+  navigator.clipboard.writeText(contentToText(galCurrent.output.conteudo)).then(()=>toast('Texto copiado!'));
+}
+
+function promptNovaVersao(key, output){
+  return GALERIAS[key].promptVersao(output.titulo || GALERIAS[key].label);
+}
+
+function copyGalPrompt(){
+  if(!galCurrent) return;
+  const p = promptNovaVersao(galCurrent.key, galCurrent.output);
+  navigator.clipboard.writeText(p).then(()=>toast('Prompt copiado — cole no Claude para gerar outra versão'));
+}
+
+function copyVersaoPrompt(key, id){
+  const o = galCache[id]; if(!o) return;
+  navigator.clipboard.writeText(promptNovaVersao(key, o)).then(()=>toast('Prompt copiado — cole no Claude para gerar outra versão'));
+}
+
+function downloadGalPdf(ev){
+  if(!galCurrent) return;
+  baixarPdf(galCurrent.output.id, ev && ev.currentTarget);
+}
+
+// ── DOWNLOAD PDF ─────────────────────────────────────────────────────────
+function slugify(s){
+  return (s||'output').toString().normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'').toLowerCase().slice(0,60) || 'output';
+}
+
+async function baixarPdf(id){
+  const o = galCache[id];
+  if(!pdfDisponivel){   // servidor sem reportlab — vai direto pro modo impressão
+    imprimirComoPdf(o || await (await fetch(API+'/outputs/'+id)).json());
+    return;
+  }
+  toast('Gerando PDF…');
+  try{
+    const r = await fetch(API+'/outputs/'+id+'/pdf');
+    if(r.status === 501){                    // reportlab não instalado
+      imprimirComoPdf(o || await (await fetch(API+'/outputs/'+id)).json());
+      return;
+    }
+    if(!r.ok) throw new Error('http '+r.status);
+    const blob = await r.blob();
+    const url  = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = slugify(o && o.titulo ? o.titulo : id) + '.pdf';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 4000);
+    toast('PDF baixado!');
+  }catch(e){
+    if(o){ imprimirComoPdf(o); }
+    else  { toast('Não foi possível gerar o PDF.'); }
+  }
+}
+
+/** Fallback sem reportlab: abre uma janela formatada e chama a impressão
+ *  (o navegador oferece "Salvar como PDF"). */
+function imprimirComoPdf(o){
+  const dt = o.data ? new Date(o.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}) : '';
+  const w = window.open('', '_blank');
+  if(!w){ toast('Permita pop-ups para baixar o PDF.'); return; }
+  w.document.write(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+    <title>${esc(o.titulo||o.id)}</title><style>
+      @page{size:A4;margin:18mm}
+      body{font-family:Georgia,'Times New Roman',serif;color:#4a4a4a;font-size:11pt;line-height:1.6}
+      h1{font-size:19pt;color:#013B6B;margin:0 0 4px}
+      .sub{font-size:9pt;color:#8a8a8a;margin-bottom:10px}
+      .rule{height:2px;background:#C1A44F;margin-bottom:18px}
+      pre{white-space:pre-wrap;font-family:inherit;font-size:11pt;margin:0}
+      footer{margin-top:26px;padding-top:8px;border-top:1px solid #ebebeb;font-size:8pt;color:#8a8a8a}
+    </style></head><body>
+      <h1>${esc(o.titulo||o.id)}</h1>
+      <div class="sub">Kit Select IA${dt?' · gerado em '+dt:''}</div>
+      <div class="rule"></div>
+      <pre>${esc(contentToText(o.conteudo))}</pre>
+      <footer>Kit Select IA · Fórum Negócios Select</footer>
+    </body></html>`);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(), 350);
+  toast('Escolha "Salvar como PDF" na janela de impressão.');
+}
+
+async function delGal(key, id){
+  if(!confirm('Remover este resultado salvo?')) return;
+  await fetch(API+'/outputs/'+id, {method:'DELETE'});
+  delete galCache[id];
+  await loadAgenda();          // o servidor tira o material do calendário junto
+  loadGaleria(key);
+  loadStatus();
+  toast('Resultado removido.');
+}
+
+function setBadge(elId, n){
+  const el = document.getElementById(elId);
+  if(el) el.textContent = n;
+}
+
+// ── AGENDAR MATERIAL NO CALENDÁRIO DE CONTEÚDO ───────────────────────────
+// Materiais que fazem sentido marcar em uma data de publicação. Pesquisas de
+// mercado e resumos de documento ficam de fora — não são conteúdo publicável.
+const AGENDAVEL = ['criar-anuncio','proposta-comercial','legenda-no-tom','roteiro-de-reels','descricao-de-design','mes-de-conteudo'];
+const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const MESES_CURTO = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const DIAS_SEMANA = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+
+let agendaItens = [];         // itens vindos de /api/agenda
+let agendaPorOutput = {};     // output_id -> item
+let agTarget = null;          // material sendo agendado no modal
+
+function agendavel(ferramenta){ return AGENDAVEL.includes(ferramenta); }
+
+/** Semana 1-4 do mês (mesma régua do calendário) e coluna do dia da semana. */
+function agSemana(d){ return Math.min(4, Math.floor((d.getDate()-1)/7)+1); }
+function agColuna(d){ return (d.getDay()+6)%7; }
+function agData(iso){ const [y,m,d] = (iso||'').split('-').map(Number); return new Date(y, (m||1)-1, d||1); }
+function agIso(y,m,d){ return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function agLabelCurto(iso){ const d = agData(iso); return `${String(d.getDate()).padStart(2,'0')}/${MESES_CURTO[d.getMonth()]}`; }
+
+async function loadAgenda(){
+  try{
+    agendaItens = await (await fetch(API+'/agenda')).json();
+  }catch(e){ agendaItens = []; }
+  agendaPorOutput = Object.fromEntries(agendaItens.map(a => [a.output_id, a]));
+  return agendaItens;
+}
+
+/** Abre o seletor de dia/mês para um material salvo. */
+function abrirAgendar(id, titulo, ferramenta){
+  if(!id) return;
+  const cache = galCache[id] || {};
+  agTarget = {
+    id,
+    titulo: titulo || cache.titulo || id,
+    ferramenta: ferramenta || cache.ferramenta || '',
+    atual: agendaPorOutput[id] || null,
+  };
+  const tool = TOOL_MAP[agTarget.ferramenta];
+  document.getElementById('ag-target').innerHTML =
+    `<strong>${esc(agTarget.titulo)}</strong>${tool ? esc(tool.name) : 'Material salvo'} · escolha o dia em que este material vai para o ar.`;
+
+  // base: data já agendada ou hoje
+  const base = agTarget.atual ? agData(agTarget.atual.data) : new Date();
+  const hoje = new Date();
+  const mesSel = document.getElementById('ag-mes');
+  mesSel.innerHTML = '';
+  // do mês passado até 11 meses à frente
+  for(let k=-1; k<=11; k++){
+    const d = new Date(hoje.getFullYear(), hoje.getMonth()+k, 1);
+    const opt = document.createElement('option');
+    opt.value = `${d.getFullYear()}-${d.getMonth()}`;
+    opt.textContent = `${MESES[d.getMonth()]} de ${d.getFullYear()}`;
+    mesSel.appendChild(opt);
+  }
+  const alvoMes = `${base.getFullYear()}-${base.getMonth()}`;
+  mesSel.value = [...mesSel.options].some(o=>o.value===alvoMes) ? alvoMes : mesSel.options[1].value;
+  agPreencheDias(base.getDate());
+
+  const rm = document.getElementById('ag-remover');
+  rm.style.display = agTarget.atual ? '' : 'none';
+  document.getElementById('ag-salvar').innerHTML =
+    `<svg class="ic"><use href="#i-calendar-plus"/></svg>${agTarget.atual ? 'Remarcar data' : 'Adicionar ao calendário'}`;
+  document.getElementById('ag-modal-bg').classList.add('open');
+}
+
+/** Preenche os dias válidos do mês selecionado, preservando a escolha quando possível. */
+function agPreencheDias(diaDesejado){
+  const [y, m] = document.getElementById('ag-mes').value.split('-').map(Number);
+  const ultimo = new Date(y, m+1, 0).getDate();
+  const diaSel = document.getElementById('ag-dia');
+  const anterior = diaDesejado || parseInt(diaSel.value, 10) || 1;
+  diaSel.innerHTML = '';
+  for(let d=1; d<=ultimo; d++){
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = `${d} — ${DIAS_SEMANA[new Date(y, m, d).getDay()]}`;
+    diaSel.appendChild(opt);
+  }
+  diaSel.value = Math.min(anterior, ultimo);
+  agAtualizaPreview();
+}
+
+function agMesTrocado(){ agPreencheDias(); }
+
+function agAtualizaPreview(){
+  const [y, m] = document.getElementById('ag-mes').value.split('-').map(Number);
+  const dia = parseInt(document.getElementById('ag-dia').value, 10) || 1;
+  const d = new Date(y, m, dia);
+  document.getElementById('ag-preview').innerHTML =
+    `Vai aparecer no calendário em <strong>${DIAS_SEMANA[d.getDay()]}, ${dia} de ${MESES[m]} de ${y}</strong> — linha da <strong>Semana ${agSemana(d)}</strong>.`;
+}
+
+function closeAgendar(e){ if(e.target.id==='ag-modal-bg') closeAgendarDirect(); }
+function closeAgendarDirect(){ document.getElementById('ag-modal-bg').classList.remove('open'); }
+
+async function salvarAgendamento(){
+  if(!agTarget) return;
+  const [y, m] = document.getElementById('ag-mes').value.split('-').map(Number);
+  const dia = parseInt(document.getElementById('ag-dia').value, 10) || 1;
+  const btn = document.getElementById('ag-salvar');
+  btn.disabled = true;
+  try{
+    const r = await fetch(API+'/agenda', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({output_id: agTarget.id, data: agIso(y,m,dia), titulo: agTarget.titulo}),
+    });
+    if(!r.ok) throw new Error('http '+r.status);
+    closeAgendarDirect();
+    await posAgenda();
+    toast(`Agendado para ${dia} de ${MESES[m]} — veja em Conteúdo.`);
+  }catch(e){
+    toast('Não foi possível agendar. O servidor está rodando?');
+  }finally{ btn.disabled = false; }
+}
+
+async function removerAgendamentoAtual(){
+  if(!agTarget || !agTarget.atual) return;
+  closeAgendarDirect();
+  await removerAgendamento(agTarget.atual.id, true);
+}
+
+async function removerAgendamento(agendaId, silencioso){
+  if(!silencioso && !confirm('Tirar este material do calendário?')) return;
+  try{
+    await fetch(API+'/agenda/'+agendaId, {method:'DELETE'});
+    await posAgenda();
+    toast('Material removido do calendário.');
+  }catch(e){ toast('Não foi possível remover do calendário.'); }
+}
+
+/** Recarrega a agenda e atualiza o que está na tela. */
+async function posAgenda(){
+  await loadAgenda();
+  if(currentPage === 'conteudo') await loadConteudo();
+  if(GALERIAS[currentPage])      await loadGaleria(currentPage);
+  if(currentPage === 'outputs')  await loadOutputsFull();
+  atualizaBotaoAgendarModal();
+  // modal simples de output aberto: atualiza o rótulo do botão
+  const out = document.getElementById('out-agendar');
+  if(out && agTarget && out.style.display !== 'none'){
+    const ag = agendaPorOutput[agTarget.id];
+    out.innerHTML = `<svg class="ic"><use href="#i-calendar-plus"/></svg>`
+      + (ag ? `No calendário em ${agLabelCurto(ag.data)} — remarcar` : 'Adicionar ao calendário');
+  }
+}
+
+/** Ajusta o botão do modal de visualização conforme o material já agendado. */
+function atualizaBotaoAgendarModal(){
+  const btn = document.getElementById('gal-agendar');
+  if(!btn) return;
+  const o = galCurrent && galCurrent.output;
+  if(!o || !agendavel(o.ferramenta)){ btn.style.display = 'none'; return; }
+  btn.style.display = '';
+  const ag = agendaPorOutput[o.id];
+  btn.innerHTML = `<svg class="ic"><use href="#i-calendar-plus"/></svg>`
+    + (ag ? `No calendário em ${agLabelCurto(ag.data)} — remarcar` : 'Adicionar ao calendário');
+}
+
+/** Abre o material salvo na tela em que ele vive. */
+function abrirMaterial(ferramenta, id){
+  const key = Object.keys(GALERIAS).find(k => {
+    const c = GALERIAS[k];
+    return (c.ferramentas || [c.ferramenta]).includes(ferramenta);
+  });
+  if(key) openGal(key, id); else openOutput(id);
+}
+
+/** Chips dos materiais agendados, posicionados na semana/dia da data escolhida. */
+function agendaChips(semana, coluna){
+  return agendaItens
+    .filter(a => { const d = agData(a.data); return agSemana(d)===semana && agColuna(d)===coluna; })
+    .map(a => {
+      const tool = TOOL_MAP[a.ferramenta];
+      return `<div class="cal-post agendado" onclick="abrirMaterial('${a.ferramenta}','${a.output_id}')" title="${esc(a.titulo)}">
+        <div class="cp-rm" title="Tirar do calendário" onclick="event.stopPropagation();removerAgendamento('${a.id}')">${icon('trash')}</div>
+        <div class="cp-pilar" style="color:var(--navy)">${tool ? esc(tool.tagLabel) : 'Material'}</div>
+        <div class="cp-title">${esc(a.titulo)}</div>
+        ${tool?`<div class="cp-fmt">${esc(tool.name)}</div>`:''}
+        <div class="cp-when">${icon('calendar')} ${agLabelCurto(a.data)}</div>
+      </div>`;
+    }).join('');
+}
+
+/** Lista "agenda de publicação" mostrada acima do calendário. */
+function agendaListaHtml(){
+  if(!agendaItens.length) return '';
+  const itens = agendaItens.map(a => {
+    const d = agData(a.data);
+    const tool = TOOL_MAP[a.ferramenta];
+    return `<div class="ag-item">
+      <div class="ag-when"><span class="d">${d.getDate()}</span><span class="m">${MESES_CURTO[d.getMonth()]}</span></div>
+      <div class="ag-meta">
+        <div class="ag-name" onclick="abrirMaterial('${a.ferramenta}','${a.output_id}')">${esc(a.titulo)}</div>
+        <div class="ag-tool">${tool ? esc(tool.name) : 'Material salvo'} · ${DIAS_SEMANA[d.getDay()]}</div>
+      </div>
+      <div class="ag-rm" title="Tirar do calendário" onclick="removerAgendamento('${a.id}')">${icon('trash')}</div>
+    </div>`;
+  }).join('');
+  return `<div class="card full" style="margin-bottom:16px">
+    <div class="card-head">
+      <div class="card-title">${icon('calendar-plus')} Materiais agendados</div>
+      <div class="card-act">${plural(agendaItens.length,'material marcado','materiais marcados')}</div>
+    </div>
+    <div class="card-body"><div class="ag-list">${itens}</div></div>
+  </div>`;
+}
+
+// ── MEU PROGRESSO (uso da plataforma) ────────────────────────────────────
+const CAT_LABEL = {conteudo:'Conteúdo', vender:'Vender', atender:'Atender', mercado:'Mercado', docs:'Documentos', base:'Base'};
+const CAT_COLOR = {conteudo:'#1a6ea8', vender:'#b06000', atender:'#2a7a4f', mercado:'#6020a0', docs:'#8a6010', base:'#013B6B'};
+const DIA_LETRA = ['S','T','Q','Q','S','S','D'];
+
+function plural(n, um, muitos){ return n === 1 ? `1 ${um}` : `${n} ${muitos}`; }
+
+function fmtHoras(h){
+  if(h < 1) return Math.round(h*60) + ' min';
+  return (Number.isInteger(h) ? h : h.toFixed(1).replace('.',',')) + 'h';
+}
+
+function fmtMinutos(min){
+  min = Math.round(min || 0);
+  return min < 60 ? min + ' min' : fmtHoras(Math.round(min/6)/10);
+}
+
+function fmtDataCurta(iso){
+  if(!iso) return '—';
+  const d = new Date(iso + (iso.length <= 10 ? 'T12:00:00' : ''));
+  return isNaN(d) ? '—' : d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+async function loadProgresso(){
+  const wrap = document.getElementById('pg-wrap');
+  if(!wrap.innerHTML.trim()) wrap.innerHTML = '<div class="empty"><span class="em">'+icon('trending')+'</span>Calculando seu progresso…</div>';
+  try{
+    const d = await (await fetch(API+'/uso')).json();
+    renderProgresso(wrap, d);
+  }catch(e){
+    wrap.innerHTML = '<div class="empty"><span class="em">'+icon('alert')+'</span>Não foi possível carregar seus dados de uso. O servidor está rodando?</div>';
+  }
+}
+
+function renderProgresso(wrap, d){
+  const r = d.resumo;
+
+  if(!r.total_entregaveis){
+    wrap.innerHTML = `<div class="card full"><div class="card-body">
+      <div class="empty">
+        <span class="em">${icon('trending')}</span>
+        Seu progresso aparece aqui assim que você gerar o primeiro material.<br>
+        Cada entregável salvo vira número: tempo economizado, constância e evolução no uso do kit.
+        <div style="margin-top:14px"><button class="btn btn-gold" onclick="copyContentPrompt('configurar meu negócio')">Começar pelo perfil do negócio</button></div>
+      </div></div></div>`;
+    return;
+  }
+
+  wrap.innerHTML = pgHero(r) + pgKpis(r) + `
+    <div class="row2">
+      ${pgCard('Ritmo das últimas 8 semanas', 'activity', pgBars(d.serie_semanas))}
+      ${pgCard('Mix de entregas por área', 'grid', pgMix(d.por_categoria, r.total_entregaveis))}
+    </div>
+    ${pgCard('Ferramentas que você mais usa', 'target', pgRank(d.por_ferramenta), 'full')}
+    <div class="row2">
+      ${pgCard('Sua constância nos últimos 3 meses', 'calendar', pgHeat(d.heatmap))}
+      ${pgCard('Próximos passos sugeridos', 'zap', pgNext(d.nao_usadas))}
+    </div>
+    ${pgCard('Suas conquistas', 'award', pgMarcos(d.marcos), 'full')}`;
+}
+
+function pgCard(title, ic, body, cls){
+  return `<div class="card ${cls==='full'?'full mb':''}">
+    <div class="card-head"><div class="card-title">${icon(ic)} ${title}</div></div>
+    <div class="card-body">${body}</div>
+  </div>`;
+}
+
+function pgHero(r){
+  const desde = r.primeiro_uso ? `Desde ${fmtDataCurta(r.primeiro_uso)}` : 'Desde o seu primeiro uso';
+  const nome  = r.empresa ? esc(r.empresa) : 'seu negócio';
+  return `<div class="pg-hero">
+    <div class="pg-hero-txt">
+      <h3>${desde}, o Kit Select IA já produziu ${plural(r.total_entregaveis,'entregável','entregáveis')} para ${nome}.</h3>
+      <p>Isso equivale a cerca de <strong style="color:var(--gold)">${fmtHoras(r.horas_economizadas)}</strong> de trabalho que você não precisou fazer do zero —
+      estimativa conservadora do tempo médio para produzir cada material manualmente.</p>
+    </div>
+    <div class="pg-hero-big">
+      <div class="n">${fmtHoras(r.horas_economizadas)}</div>
+      <div class="l">economizadas</div>
+    </div>
+  </div>`;
+}
+
+function pgKpiCard(ic, cor, bg, valor, unidade, label, sub){
+  return `<div class="pg-card">
+    <div class="ic-badge" style="background:${bg};color:${cor}">${icon(ic)}</div>
+    <div class="v">${valor}${unidade?`<small>${unidade}</small>`:''}</div>
+    <div class="l">${label}</div>
+    ${sub?`<div class="s">${sub}</div>`:''}
+  </div>`;
+}
+
+function pgKpis(r){
+  const cobertura = Math.round(r.ferramentas_usadas / r.ferramentas_total * 100);
+  return `<div class="pg-kpi">
+    ${pgKpiCard('folder','#1a6ea8','#e8f4fd', r.total_entregaveis, '', 'Entregáveis criados',
+      r.media_semanal ? `${r.media_semanal.toString().replace('.',',')} por semana em média` : '')}
+    ${pgKpiCard('target','#6020a0','#f5f0ff', r.ferramentas_usadas, `/${r.ferramentas_total}`, 'Ferramentas experimentadas',
+      `${cobertura}% do kit explorado`)}
+    ${pgKpiCard('calendar','#2a7a4f','#e8f7ee', r.dias_ativos, '', 'Dias em que você usou o kit',
+      r.semanas_ativas ? `${plural(r.semanas_ativas,'semana ativa','semanas ativas')}` : '')}
+    ${pgKpiCard('activity','#b06000','#fff0e0', r.semanas_seguidas, '', 'Semanas seguidas ativo',
+      r.ultimo_uso ? `último material em ${fmtDataCurta(r.ultimo_uso)}` : '')}
+  </div>`;
+}
+
+function pgBars(serie){
+  if(!serie || !serie.length) return '<div class="pd-empty">Sem dados suficientes ainda.</div>';
+  const max = Math.max(1, ...serie.map(s=>s.total));
+  const bars = serie.map(s => {
+    const h = Math.round(s.total / max * 100);
+    return `<div class="pg-bar ${s.atual?'now':''} ${s.total?'':'zero'}" title="Semana de ${s.label}: ${plural(s.total,'entregável','entregáveis')}">
+      <div class="n">${s.total}</div>
+      <div class="col" style="height:${s.total ? Math.max(h,4) : 3}%"></div>
+      <div class="d">${s.label}</div>
+    </div>`;
+  }).join('');
+  const total = serie.reduce((a,s)=>a+s.total,0);
+  return `<div class="pg-bars">${bars}</div>
+    <div class="pg-note">${plural(total,'entregável gerado','entregáveis gerados')} nas últimas 8 semanas. A barra escura é a semana atual.</div>`;
+}
+
+function pgMix(cats, total){
+  if(!cats || !cats.length) return '<div class="pd-empty">Sem dados suficientes ainda.</div>';
+  const seg = cats.map(c=>`<span style="background:${CAT_COLOR[c.cat]||'var(--gold)'};width:${(c.total/total*100).toFixed(1)}%" title="${CAT_LABEL[c.cat]||c.cat}"></span>`).join('');
+  const leg = cats.map(c=>`<div class="pg-mix-leg">
+      <i style="background:${CAT_COLOR[c.cat]||'var(--gold)'}"></i>${CAT_LABEL[c.cat]||c.cat}
+      <b>${c.total} · ${Math.round(c.total/total*100)}%</b>
+    </div>`).join('');
+  const lider = cats[0];
+  return `<div class="pg-mix-bar">${seg}</div><div class="pg-mix-legend">${leg}</div>
+    <div class="pg-note">Sua área mais forte hoje é <strong>${CAT_LABEL[lider.cat]||lider.cat}</strong>. Um mix equilibrado costuma render mais resultado: conteúdo atrai, vender converte, atender fideliza.</div>`;
+}
+
+function pgRank(lista){
+  const usadas = (lista||[]).filter(f=>f.total>0);
+  if(!usadas.length) return '<div class="pd-empty">Nenhuma ferramenta usada ainda.</div>';
+  const max = Math.max(...usadas.map(f=>f.total));
+  const rows = usadas.map(f=>{
+    const cor = CAT_COLOR[f.cat] || 'var(--gold)';
+    return `<div class="pg-rank-row">
+      <div class="pg-rank-name">${esc(f.label)}</div>
+      <div class="pg-rank-track"><div class="pg-rank-fill" style="width:${Math.max(f.total/max*100,3)}%;background:${cor}"></div></div>
+      <div class="pg-rank-val"><strong>${f.total}</strong> ${f.total===1?'uso':'usos'}</div>
+    </div>`;
+  }).join('');
+  const horas = usadas.reduce((a,f)=>a+f.minutos,0)/60;
+  return `<div class="pg-rank">${rows}</div>
+    <div class="pg-note">Essas ferramentas somam ${fmtHoras(Math.round(horas*10)/10)} de trabalho economizado.</div>`;
+}
+
+function pgHeat(dias){
+  if(!dias || !dias.length) return '<div class="pd-empty">Sem dados suficientes ainda.</div>';
+  const nivel = n => n===0?'':(n===1?'l1':(n===2?'l2':(n<=4?'l3':'l4')));
+  const cells = dias.map(d=>`<i class="${nivel(d.total)}" title="${fmtDataCurta(d.data)}: ${plural(d.total,'entregável','entregáveis')}"></i>`).join('');
+  const labels = DIA_LETRA.map(l=>`<span>${l}</span>`).join('');
+  const ativos = dias.filter(d=>d.total>0).length;
+  return `<div class="pg-heat">
+      <div class="pg-heat-days">${labels}</div>
+      <div class="pg-heat-grid">${cells}</div>
+    </div>
+    <div class="pg-heat-leg">menos
+      <i></i><i class="l1" style="background:#dbe9f5"></i><i class="l2" style="background:#9dc4e2"></i>
+      <i class="l3" style="background:#4a8dbf"></i><i class="l4" style="background:var(--navy)"></i>mais
+    </div>
+    <div class="pg-note">${plural(ativos,'dia com produção','dias com produção')} nos últimos 3 meses. Cada quadradinho é um dia.</div>`;
+}
+
+function pgNext(naoUsadas){
+  if(!naoUsadas || !naoUsadas.length){
+    return `<div class="empty" style="padding:18px 0">
+      <span class="em">${icon('check')}</span>
+      Você já experimentou todas as 10 ferramentas do kit.<br>
+      Agora o ganho vem da repetição: mantenha o ritmo semanal.
+    </div>`;
+  }
+  const rows = naoUsadas.slice(0,5).map(f=>{
+    const t = TOOL_MAP[f.id] || {};
+    const bg = TOOL_ICON_BG[f.cat] || '#eee', fg = TOOL_ICON_FG[f.cat] || 'var(--navy)';
+    const prompt = (t.prompt || f.label).replace(/'/g,"\\'");
+    return `<div class="pg-next-row" onclick="copyContentPrompt('${prompt}')">
+      <div class="pg-next-ic" style="background:${bg};color:${fg}">${icon(t.icon||'zap')}</div>
+      <div>
+        <div class="pg-next-t">${esc(f.label)}</div>
+        <div class="pg-next-d">${esc(t.desc||'Ferramenta ainda não usada')} · economiza ~${fmtMinutos(f.minutos_unit||30)}</div>
+      </div>
+      <div class="pg-next-cta">copiar prompt</div>
+    </div>`;
+  }).join('');
+  return `<div class="pg-next">${rows}</div>
+    <div class="pg-note">${plural(naoUsadas.length,'ferramenta ainda não experimentada','ferramentas ainda não experimentadas')}. Clique para copiar o prompt e testar no Claude.</div>`;
+}
+
+function pgMarcos(marcos){
+  if(!marcos || !marcos.length) return '';
+  const cards = marcos.map(m=>{
+    const barra = (!m.ok && m.meta)
+      ? `<div class="mk-p"><i style="width:${Math.min(100, (m.progresso||0)/m.meta*100)}%"></i></div>`
+      : '';
+    const sub = (!m.ok && m.meta) ? `${m.desc} · ${m.progresso||0}/${m.meta}` : m.desc;
+    return `<div class="pg-marco ${m.ok?'on':'off'}">
+      <div class="mk-ic">${icon(m.ok?'check':'award')}</div>
+      <div style="flex:1">
+        <div class="mk-t">${esc(m.titulo)}</div>
+        <div class="mk-d">${esc(sub)}</div>
+        ${barra}
+      </div>
+    </div>`;
+  }).join('');
+  const feitos = marcos.filter(m=>m.ok).length;
+  return `<div class="pg-marcos">${cards}</div>
+    <div class="pg-note">${feitos} de ${marcos.length} conquistas desbloqueadas.</div>`;
+}
+
+// ── CALENDÁRIO DE CONTEÚDO ───────────────────────────────────────────────
+const PILARES = {
+  educar:  {label:'Educar',  color:'#1a6ea8', bg:'#e8f4fd'},
+  inspirar:{label:'Inspirar',color:'#6020a0', bg:'#f5f0ff'},
+  vender:  {label:'Vender',  color:'#b06000', bg:'#fff0e0'},
+  conectar:{label:'Conectar',color:'#2a7a4f', bg:'#e8f7ee'},
+};
+const WEEKDAY_LABELS = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
+const PIECE_META = {
+  descricao:{label:'Descrição de design', ic:'palette', verbNew:'descrição de design (briefing visual)', verbVar:'criar uma variação da descrição de design'},
+  legenda:  {label:'Legenda no meu tom',  ic:'pencil',  verbNew:'escrever legenda no meu tom',           verbVar:'criar uma variação da legenda'},
+  roteiro:  {label:'Roteiro de Reels',    ic:'film',    verbNew:'criar roteiro de reels',                verbVar:'criar uma variação do roteiro de reels'},
+};
+
+function norm(s){return (s||'').toString().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();}
+function esc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function weekdayIndex(dia){
+  const d = norm(dia);
+  if(!d) return -1;
+  if(d.startsWith('seg')) return 0;
+  if(d.startsWith('ter')) return 1;
+  if(d.startsWith('qua')) return 2;
+  if(d.startsWith('qui')) return 3;
+  if(d.startsWith('sex')) return 4;
+  if(d.startsWith('sab')) return 5;
+  if(d.startsWith('dom')) return 6;
+  return -1;
+}
+function weekIndex(sem){ const m = norm(sem).match(/\d+/); return m ? Math.max(1,Math.min(4,parseInt(m[0],10))) : 1; }
+function pilarKey(p){
+  const n = norm(p);
+  if(n.includes('educ')) return 'educar';
+  if(n.includes('inspir')) return 'inspirar';
+  if(n.includes('vend')) return 'vender';
+  if(n.includes('conect')) return 'conectar';
+  return null;
+}
+
+function splitRow(line){ return line.trim().replace(/^\|/,'').replace(/\|$/,'').split('|').map(c=>c.trim()); }
+
+function parseCalendar(text){
+  if(typeof text !== 'string') return [];
+  const lines = text.split('\n').map(l=>l.trim()).filter(l=>l.includes('|'));
+  let headerIdx = -1, cols = [];
+  for(let i=0;i<lines.length;i++){
+    const cells = splitRow(lines[i]);
+    const joined = norm(cells.join(' '));
+    if(joined.includes('semana') && joined.includes('dia') && (joined.includes('pilar') || joined.includes('tema'))){
+      headerIdx = i; cols = cells.map(c=>norm(c)); break;
+    }
+  }
+  if(headerIdx < 0) return [];
+  const idx = name => cols.findIndex(c=>c.includes(name));
+  const ci = {semana:idx('semana'), dia:idx('dia'), pilar:idx('pilar'), tema:idx('tema'), formato:idx('formato'), titulo:idx('titulo')};
+  const posts = [];
+  for(let i=headerIdx+1;i<lines.length;i++){
+    const cells = splitRow(lines[i]);
+    if(!cells.length || cells.every(c=>/^[-:\s]*$/.test(c))) continue; // separador
+    const get = k => (ci[k]>=0 && ci[k]<cells.length) ? cells[ci[k]].trim() : '';
+    const titulo = get('titulo') || get('tema');
+    if(!titulo) continue;
+    posts.push({
+      semana: weekIndex(get('semana')), dia: get('dia'), wd: weekdayIndex(get('dia')),
+      pilar: pilarKey(get('pilar')), pilarRaw: get('pilar'),
+      tema: get('tema'), formato: get('formato'), titulo,
+      has:{legenda:null, roteiro:null, descricao:null},
+    });
+  }
+  return posts;
+}
+
+let calPosts = [];
+let calPieces = {legenda:[], roteiro:[], descricao:[]};
+
+function matchPiece(post, outs){
+  const pt = norm(post.titulo), tm = norm(post.tema);
+  // 1) vínculo exato: post_ref gravado pela skill
+  for(const o of outs){
+    const pr = norm(o.post_ref);
+    if(pr && pt && pr === pt) return o;
+  }
+  // 2) fallback heurístico por título/tema (conteúdos antigos sem post_ref)
+  for(const o of outs){
+    const ot = norm(o.titulo);
+    if(!ot) continue;
+    if(pt && pt.length>=5 && (ot.includes(pt) || pt.includes(ot))) return o;
+    if(tm && tm.length>=5 && (ot.includes(tm) || tm.includes(ot))) return o;
+  }
+  return null;
+}
+
+async function loadConteudo(){
+  const wrap = document.getElementById('cal-wrap');
+  wrap.innerHTML = '<div class="empty"><span class="em">'+icon('calendar')+'</span>Carregando calendário…</div>';
+  try{
+    const [list] = await Promise.all([ (await fetch(API+'/outputs')).json(), loadAgenda() ]);
+    const mes = list.filter(o=>o.ferramenta==='mes-de-conteudo');
+    calPieces.legenda   = list.filter(o=>o.ferramenta==='legenda-no-tom');
+    calPieces.roteiro   = list.filter(o=>o.ferramenta==='roteiro-de-reels');
+    calPieces.descricao = list.filter(o=>o.ferramenta==='descricao-de-design');
+    setBadge('sb-conteudo-count', list.filter(o=>CONTEUDO_FERRAMENTAS.includes(o.ferramenta)).length);
+    if(!mes.length){ renderCalEmpty(wrap); return; }
+    const full = await (await fetch(API+'/outputs/'+mes[0].id)).json();
+    calPosts = parseCalendar(full.conteudo);
+    if(!calPosts.length){ renderCalEmpty(wrap, true); return; }
+    calPosts.forEach(p=>{
+      p.has.legenda   = matchPiece(p, calPieces.legenda);
+      p.has.roteiro   = matchPiece(p, calPieces.roteiro);
+      p.has.descricao = matchPiece(p, calPieces.descricao);
+    });
+    renderCalendar(wrap, full);
+  }catch(e){
+    wrap.innerHTML = '<div class="empty"><span class="em">'+icon('alert')+'</span>Não foi possível carregar o calendário.</div>';
+  }
+}
+
+function renderCalEmpty(wrap, unparsed){
+  const msg = unparsed
+    ? 'Encontramos um mês de conteúdo, mas não foi possível ler o calendário dele.<br>Gere um novo mês no formato de tabela e ele aparece aqui.'
+    : 'Você ainda não tem um mês de conteúdo aprovado.<br>Gere seu calendário no Claude e ele aparece aqui automaticamente.';
+  wrap.innerHTML = agendaListaHtml() + `
+    <div class="card full"><div class="card-body">
+      <div class="empty">
+        <span class="em">${icon('calendar')}</span>
+        ${msg}
+        <div class="empty-hint">Use o botão <strong>copiar prompt</strong> de "Mês de conteúdo" abaixo.</div>
+      </div>
+    </div></div>`;
+}
+
+function renderCalendar(wrap, full){
+  const dt = full.data ? new Date(full.data).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+  const legend = Object.values(PILARES).map(v=>`<div class="cal-leg"><span class="dot" style="background:${v.color}"></span>${v.label}</div>`).join('')
+    + `<div class="cal-leg"><span class="dot on" style="background:var(--green)"></span>conteúdo gerado</div>`
+    + `<div class="cal-leg"><span class="dot" style="background:var(--navy)"></span>material agendado</div>`;
+
+  let cells = '<div class="cal-daylabel"></div>' + WEEKDAY_LABELS.map(d=>`<div class="cal-daylabel">${d}</div>`).join('');
+  for(let w=1; w<=4; w++){
+    cells += `<div class="cal-weeklabel">Semana<br>${w}</div>`;
+    const weekPosts = calPosts.filter(p=>p.semana===w);
+    const byCol = {}, unknown = [];
+    weekPosts.forEach(p=>{ if(p.wd>=0){(byCol[p.wd]=byCol[p.wd]||[]).push(p);} else unknown.push(p); });
+    for(let c=0;c<7 && unknown.length;c++){ if(!byCol[c]) byCol[c]=[unknown.shift()]; }
+    while(unknown.length){ (byCol[0]=byCol[0]||[]).push(unknown.shift()); }
+    for(let c=0;c<7;c++){
+      const ps = byCol[c]||[];
+      const extra = agendaChips(w, c);
+      const conteudo = ps.map(renderPostChip).join('') + extra;
+      cells += conteudo ? `<div class="cal-cell">${conteudo}</div>` : `<div class="cal-cell empty"></div>`;
+    }
+  }
+  wrap.innerHTML = `
+    <div class="cal-head">
+      <div class="cal-info">Plano aprovado: <strong>${esc(full.titulo||'Mês de conteúdo')}</strong> · gerado em ${dt} · ${calPosts.length} posts</div>
+    </div>
+    <div class="cal-legend">${legend}</div>
+    ${agendaListaHtml()}
+    <div class="card full"><div class="card-body" style="overflow-x:auto">
+      <div class="cal-grid">${cells}</div>
+    </div></div>`;
+}
+
+function renderPostChip(p){
+  const i = calPosts.indexOf(p);
+  const pil = PILARES[p.pilar] || {label:esc(p.pilarRaw)||'—', color:'var(--gold)', bg:'var(--off)'};
+  const ready = ['descricao','legenda','roteiro'].map(k=>`<i class="${p.has[k]?'on':''}" title="${PIECE_META[k].label}"></i>`).join('');
+  return `<div class="cal-post" style="border-left-color:${pil.color};background:${pil.bg}" onclick="openPostModal(${i})">
+    <div class="cp-pilar" style="color:${pil.color}">${pil.label}</div>
+    <div class="cp-title">${esc(p.titulo)}</div>
+    ${p.formato?`<div class="cp-fmt">${esc(p.formato)}</div>`:''}
+    <div class="cp-ready">${ready}</div>
+  </div>`;
+}
+
+// ── POST DETAIL MODAL ──
+let pdCurrent = null;
+function openPostModal(i){
+  const p = calPosts[i];
+  if(!p) return;
+  pdCurrent = p;
+  document.getElementById('pd-title').textContent = p.titulo;
+  const pil = PILARES[p.pilar] || {label:esc(p.pilarRaw)||'—', color:'var(--gold)'};
+  const brief = `
+    <div class="pd-brief">
+      <div class="pd-row"><div class="pd-k">Quando</div><div class="pd-v">Semana ${p.semana}${p.dia?' · '+esc(p.dia):''}</div></div>
+      <div class="pd-row"><div class="pd-k">Pilar</div><div class="pd-v"><span style="color:${pil.color};font-weight:700">${pil.label}</span></div></div>
+      ${p.formato?`<div class="pd-row"><div class="pd-k">Formato</div><div class="pd-v">${esc(p.formato)}</div></div>`:''}
+      ${p.tema?`<div class="pd-row"><div class="pd-k">Tema</div><div class="pd-v">${esc(p.tema)}</div></div>`:''}
+      <div class="pd-row"><div class="pd-k">Título</div><div class="pd-v">${esc(p.titulo)}</div></div>
+    </div>`;
+  document.getElementById('pd-body').innerHTML = brief
+    + pdSection('descricao', 'Descrição visual', p)
+    + pdSection('legenda',   'Legenda no seu tom', p)
+    + pdSection('roteiro',   'Roteiro de Reels', p);
+  document.getElementById('post-modal-bg').classList.add('open');
+  ['descricao','legenda','roteiro'].forEach(k=>{ if(p.has[k]) loadPieceContent(k, p.has[k].id); });
+}
+
+function pdSection(key, title, p){
+  const m = PIECE_META[key];
+  const done = !!p.has[key];
+  const status  = done ? '<span class="pd-status done">Pronto</span>' : '<span class="pd-status pending">A gerar</span>';
+  const content = done
+    ? `<div class="pd-body-txt" id="pd-content-${key}">Carregando…</div>`
+    : `<div class="pd-empty">Ainda não gerado para este post.</div>`;
+  const btn = done
+    ? `<button class="pd-act-btn variation" onclick="postPrompt('${key}',true)">
+         <span class="ab-t">${icon(m.ic)} Pedir uma variação</span>
+         <span class="ab-d">Copia um prompt para gerar outra versão no Claude</span>
+       </button>`
+    : `<button class="pd-act-btn" onclick="postPrompt('${key}',false)">
+         <span class="ab-t">${icon(m.ic)} ${m.label}</span>
+         <span class="ab-d">Copia o prompt para gerar no Claude</span>
+       </button>`;
+  return `<div class="pd-sec">
+    <div class="pd-sec-head"><div class="pd-sec-title">${icon(m.ic)} ${title}</div>${status}</div>
+    ${content}
+    ${btn}
+  </div>`;
+}
+
+async function loadPieceContent(key, id){
+  try{
+    const d = await (await fetch(API+'/outputs/'+id)).json();
+    const el = document.getElementById('pd-content-'+key);
+    if(el){ const c = d.conteudo; el.textContent = (typeof c==='string'?c:JSON.stringify(c,null,2)) || '(sem conteúdo)'; }
+  }catch(e){
+    const el = document.getElementById('pd-content-'+key);
+    if(el) el.textContent = '(não foi possível carregar)';
+  }
+}
+
+function postPrompt(key, isVariation){
+  const p = pdCurrent; if(!p) return;
+  const m = PIECE_META[key];
+  let prompt;
+  if(isVariation){
+    prompt = `${m.verbVar} do post "${p.titulo}"${p.tema?` (tema: ${p.tema})`:''}`;
+  }else{
+    const extra = [p.tema?`tema: ${p.tema}`:'', p.formato?`formato: ${p.formato}`:'', p.pilarRaw?`pilar: ${p.pilarRaw}`:''].filter(Boolean).join(', ');
+    prompt = `${m.verbNew} para o post "${p.titulo}"${extra?` — ${extra}`:''}`;
+  }
+  navigator.clipboard.writeText(prompt).then(()=>toast('Prompt copiado — cole no Claude'));
+}
+
+function copyContentPrompt(prompt){ navigator.clipboard.writeText(prompt).then(()=>toast('Prompt copiado — cole no Claude')); }
+function closePostModal(e){ if(e.target.id==='post-modal-bg') closePostModalDirect(); }
+function closePostModalDirect(){ document.getElementById('post-modal-bg').classList.remove('open'); }
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+async function updateAtenderCount(){
+  try{
+    const list = await (await fetch(API+'/outputs?ferramenta=respostas-cliente')).json();
+    const cnt = document.getElementById('sb-atender-count');
+    if (cnt) cnt.textContent = list.length;
+  }catch(e){}
+}
+
+async function updateGaleriaCounts(){
+  await Promise.all(Object.values(GALERIAS).map(async cfg => {
+    try{ setBadge(cfg.badge, (await galFetch(cfg)).length); }catch(e){}
+  }));
+}
+
+// Conteúdo = calendários + legendas + roteiros + descrições de design
+const CONTEUDO_FERRAMENTAS = ['mes-de-conteudo','legenda-no-tom','roteiro-de-reels','descricao-de-design'];
+async function updateConteudoCount(){
+  try{
+    const list = await galFetch({ferramentas: CONTEUDO_FERRAMENTAS});
+    setBadge('sb-conteudo-count', list.length);
+  }catch(e){}
+}
+
+// Atualiza contadores e, se uma área estiver aberta, os chips dela
+async function refreshCounts(){
+  await loadAgenda();
+  await updateAtenderCount();
+  await updateConteudoCount();
+  await updateGaleriaCounts();
+  const navEl = document.getElementById('area-nav-'+currentPage);
+  if (navEl) navEl.innerHTML = areaNavHtml(currentPage);
+}
+
+async function init() {
+  renderNetflixHome();
+  renderToolsFull();
+  await loadStatus();
+  await loadPerfil();
+  await loadOutputsHome();
+  await refreshCounts();
+  // Auto-refresh a cada 15s
+  setInterval(async ()=>{
+    await loadStatus();
+    await refreshCounts();
+    if (currentPage==='inicio') { await loadOutputsHome(); }
+    if (currentPage==='progresso') { await loadProgresso(); }
+    if (currentPage==='outputs') { await loadOutputsFull(); }
+    if (currentPage==='conteudo') { await loadConteudo(); }
+    if (currentPage==='vender') { await loadGaleria('vender'); }
+    if (currentPage==='atender') { await loadAtender(); }
+    if (currentPage==='mercado') { await loadGaleria('mercado'); }
+    if (currentPage==='documentos') { await loadGaleria('documentos'); }
+  }, 15000);
+}
+
+init();
+</script>
+</body>
+</html>
