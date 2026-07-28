@@ -1,0 +1,5 @@
+Esta pasta guarda o que o Claude gerou para você (anúncios, calendários,
+propostas, legendas...). Não é preciso mexer aqui — o painel organiza tudo
+automaticamente. Você pode apagar itens pelo próprio painel.
+
+Fórum Negócios Select

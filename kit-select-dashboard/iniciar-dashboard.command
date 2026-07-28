@@ -29,12 +29,6 @@ python3 -c "import flask" 2>/dev/null || {
     pip3 install flask flask-cors --quiet
 }
 
-# reportlab: usado para o download em PDF dos resultados
-python3 -c "import reportlab" 2>/dev/null || {
-    echo "  Instalando gerador de PDF (aguarde)..."
-    pip3 install reportlab --quiet
-}
-
 echo "  Iniciando servidor..."
 echo "  O dashboard abrirá no seu navegador em instantes."
 echo ""

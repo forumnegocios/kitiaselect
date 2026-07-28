@@ -1,0 +1,12 @@
+==== Execucao iniciada 28/07/2026 19:14:30,57 ==== 
+Python 3.14.6
+Name: Flask
+Version: 3.1.3
+Summary: A simple framework for building complex web applications.
+Home-page: 
+Author: 
+Author-email: 
+License-Expression: BSD-3-Clause
+Location: C:\Users\CRIAÇÃO2-ACARTA\AppData\Local\Programs\Python\Python314\Lib\site-packages
+Requires: blinker, click, itsdangerous, jinja2, markupsafe, werkzeug
+Required-by: flask-cors

@@ -9,8 +9,12 @@ echo   Forum Negocios Select
 echo  ============================================================
 echo.
 
+set LOGFILE=%~dp0dados\dashboard-log.txt
+if not exist "%~dp0dados" mkdir "%~dp0dados"
+echo ==== Execucao iniciada %date% %time% ==== > "%LOGFILE%"
+
 :: Verificar Python
-python --version >nul 2>&1
+python --version >> "%LOGFILE%" 2>&1
 if %errorlevel% neq 0 (
     echo  ATENCAO: Python nao encontrado.
     echo.
@@ -25,19 +29,21 @@ if %errorlevel% neq 0 (
 
 :: Instalar dependências se necessário
 echo  Verificando dependencias...
-pip show flask >nul 2>&1
+python -m pip show flask >> "%LOGFILE%" 2>&1
 if %errorlevel% neq 0 (
-    echo  Instalando Flask (primeira vez, aguarde)...
-    pip install flask flask-cors --quiet
+    echo  Instalando Flask e Flask-CORS ^(primeira vez, aguarde^)...
+    python -m pip install flask flask-cors >> "%LOGFILE%" 2>&1
+    if %errorlevel% neq 0 (
+        echo.
+        echo  ERRO ao instalar as dependencias. Veja o log em:
+        echo  %LOGFILE%
+        echo.
+        pause
+        exit /b 1
+    )
 )
 
-:: reportlab: usado para o download em PDF dos resultados
-pip show reportlab >nul 2>&1
-if %errorlevel% neq 0 (
-    echo  Instalando gerador de PDF (aguarde)...
-    pip install reportlab --quiet
-)
-
+echo  Dependencias OK.
 echo  Iniciando servidor...
 echo  O dashboard abrira no seu navegador em instantes.
 echo.
@@ -46,4 +52,7 @@ echo  ============================================================
 echo.
 
 python dashboard-server.py
+echo.
+echo  O servidor foi encerrado (codigo %errorlevel%).
+echo  Se isso foi inesperado, veja o log em: %LOGFILE%
 pause
