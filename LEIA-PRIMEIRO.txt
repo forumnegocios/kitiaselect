@@ -1,0 +1,53 @@
+═══════════════════════════════════════════════════════════════
+  KIT SELECT IA
+  Fórum Negócios Select
+═══════════════════════════════════════════════════════════════
+
+Bem-vindo! Aqui estão seus arquivos. Comece pelo manual — ele
+explica tudo passo a passo, em linguagem simples.
+
+
+O QUE TEM NESTA PASTA
+─────────────────────────────────────────────────────────────
+
+  1. Kit-Select-IA-Manual-do-Mentorado.pdf
+     O manual completo: instalação, uso no dia a dia e
+     perguntas frequentes. COMECE POR AQUI.
+
+  2. kit-select-ia.plugin
+     O kit em si, com as 10 ferramentas. Este arquivo é o
+     essencial — instale ele no Claude Cowork.
+
+  3. kit-select-dashboard.zip
+     OPCIONAL. Um painel visual que guarda e organiza o que
+     você gerou. Só instale se quiser — o kit funciona
+     perfeitamente sem ele.
+
+
+O CAMINHO MAIS CURTO
+─────────────────────────────────────────────────────────────
+
+  Se você quer começar a usar hoje, sem complicação:
+
+    → Abra o manual e siga a Parte 3 (instalar o plugin)
+    → Depois a Parte 4 (usar no dia a dia)
+
+  São cinco passos e leva menos de cinco minutos.
+  Pode ignorar o arquivo do painel por enquanto — ele pode
+  ser instalado depois, a qualquer momento, sem perder nada.
+
+
+PRECISA DE AJUDA?
+─────────────────────────────────────────────────────────────
+
+  Fale com a equipe do Fórum Negócios Select. Se travar em
+  algum ponto do manual, avise — é assim que melhoramos o
+  material para os próximos Selects.
+
+
+─────────────────────────────────────────────────────────────
+  Material exclusivo dos mentorados do Fórum Negócios Select.
+  Por favor, não redistribua estes arquivos.
+
+  @forumnegociosselect  ·  www.forumselect.com.br
+─────────────────────────────────────────────────────────────
