@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kit Select IA — Dashboard</title>
+<link rel="icon" type="image/svg+xml" href="img/FN%20S%20Icon.svg">
+<link rel="apple-touch-icon" href="img/FN%20S%20Icon.svg">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Mulish:wght@300;400;500;600;700&display=swap');
 
@@ -27,7 +29,8 @@ body{font-family:'Mulish',sans-serif;background:var(--off);color:var(--dark);dis
 .sb{width:var(--sb);background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
 .sb-brand{padding:18px 16px 15px;border-bottom:1px solid rgba(255,255,255,.1)}
 .brand-row{display:flex;align-items:center;gap:10px}
-.brand-icon{width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Source Serif 4',serif;font-weight:700;font-size:18px;color:var(--navy);flex-shrink:0}
+.brand-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.brand-icon img{width:100%;height:100%;display:block;object-fit:contain}
 .brand-name{font-family:'Source Serif 4',serif;font-size:13px;font-weight:700;color:#fff;line-height:1.25}
 .brand-sub{font-size:10px;color:rgba(255,255,255,.4);font-style:italic;margin-top:1px}
 .sb-label{font-size:9px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,.3);padding:15px 16px 5px}
@@ -496,6 +499,48 @@ svg.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-
 .pg-next-cta{margin-left:auto;font-size:9.5px;font-weight:700;color:var(--gold);white-space:nowrap}
 .pg-note{font-size:10.5px;color:var(--muted);line-height:1.5;margin-top:11px;padding-top:10px;border-top:1px solid var(--gray)}
 @media(max-width:960px){.pg-kpi{grid-template-columns:repeat(2,1fr)}.pg-hero-txt{max-width:100%}}
+
+/* ── ONBOARDING / TOUR GUIADO ───────────────────────────────────────────── */
+/* Botão de interrogação flutuante — presente em toda a plataforma */
+.help-fab{position:fixed;right:22px;bottom:22px;width:46px;height:46px;border-radius:50%;background:var(--gold);color:var(--navy);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Source Serif 4',serif;font-size:23px;font-weight:700;line-height:1;box-shadow:0 4px 14px rgba(1,45,82,.28);z-index:90;transition:transform .15s,box-shadow .15s,background .15s}
+.help-fab:hover{background:var(--gold-l);transform:translateY(-2px);box-shadow:0 7px 20px rgba(1,45,82,.34)}
+.help-fab:active{transform:translateY(0)}
+.help-fab.pulse::after{content:'';position:absolute;inset:0;border-radius:50%;border:2px solid var(--gold);animation:helpPulse 2s ease-out infinite}
+@keyframes helpPulse{0%{transform:scale(1);opacity:.75}100%{transform:scale(1.75);opacity:0}}
+.help-fab-tip{position:fixed;right:76px;bottom:32px;background:var(--navy);color:#fff;font-size:11.5px;font-weight:600;padding:7px 12px;border-radius:var(--radius-sm);box-shadow:0 4px 12px rgba(0,0,0,.2);z-index:90;pointer-events:none;opacity:0;transform:translateX(6px);transition:opacity .16s,transform .16s;white-space:nowrap}
+.help-fab-tip.on{opacity:1;transform:translateX(0)}
+.help-fab-tip strong{color:var(--gold)}
+
+/* Camada do tour */
+.tour{display:none;position:fixed;inset:0;z-index:300}
+.tour.on{display:block}
+.tour-block{position:absolute;inset:0}
+.tour-spot{position:absolute;border-radius:var(--radius);box-shadow:0 0 0 9999px rgba(1,25,47,.74),0 0 0 3px var(--gold);pointer-events:none;transition:top .3s cubic-bezier(.4,0,.2,1),left .3s cubic-bezier(.4,0,.2,1),width .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1)}
+.tour-spot.center{box-shadow:0 0 0 9999px rgba(1,25,47,.74)}
+
+.tour-pop{position:absolute;width:334px;max-width:calc(100vw - 32px);background:var(--white);border-radius:var(--radius);box-shadow:0 14px 40px rgba(1,25,47,.4);overflow:hidden;transition:top .3s cubic-bezier(.4,0,.2,1),left .3s cubic-bezier(.4,0,.2,1)}
+.tour-pop-head{background:var(--navy);padding:12px 16px;display:flex;align-items:center;gap:9px}
+.tour-pop-ic{width:26px;height:26px;border-radius:7px;background:var(--gold);color:var(--navy);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tour-pop-ic svg.ic{width:15px;height:15px}
+.tour-pop-title{font-family:'Source Serif 4',serif;font-size:14px;font-weight:600;color:#fff;line-height:1.25}
+.tour-pop-close{margin-left:auto;color:rgba(255,255,255,.5);font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
+.tour-pop-close:hover{color:#fff}
+.tour-pop-body{padding:13px 16px 14px;font-size:12.5px;line-height:1.6;color:var(--mid)}
+.tour-pop-body strong{color:var(--navy)}
+.tour-pop-body em{color:var(--gold);font-style:normal;font-weight:700}
+.tour-pop-foot{padding:0 16px 14px;display:flex;align-items:center;gap:8px}
+.tour-dots{display:flex;align-items:center;gap:4px;margin-right:auto;font-size:10.5px;color:var(--muted);font-weight:600}
+.tour-bar{width:56px;height:4px;border-radius:3px;background:var(--gray);overflow:hidden}
+.tour-bar i{display:block;height:100%;background:var(--gold);border-radius:3px;transition:width .3s ease}
+.tour-btn{border:none;cursor:pointer;font-family:'Mulish',sans-serif;font-size:11.5px;font-weight:700;padding:7px 14px;border-radius:var(--radius-sm);transition:background .13s,color .13s}
+.tour-btn.ghost{background:transparent;color:var(--muted)}
+.tour-btn.ghost:hover{background:var(--gray);color:var(--dark)}
+.tour-btn.gold{background:var(--gold);color:var(--navy)}
+.tour-btn.gold:hover{background:var(--gold-l)}
+.tour-pop-alt{padding:9px 16px;border-top:1px solid var(--gray);background:var(--off);font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.tour-pop-alt b{color:var(--gold);cursor:pointer;font-weight:700}
+.tour-pop-alt b:hover{text-decoration:underline}
+@media(max-width:700px){.tour-pop{width:calc(100vw - 32px)}}
 </style>
 </head>
 <body>
@@ -536,7 +581,7 @@ svg.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-
 <aside class="sb">
   <div class="sb-brand">
     <div class="brand-row">
-      <div class="brand-icon">S</div>
+      <div class="brand-icon"><img src="img/FN%20S%20Icon.svg" alt="Fórum Negócios Select"></div>
       <div><div class="brand-name">Kit Select IA</div><div class="brand-sub">painel do empresário</div></div>
     </div>
   </div>
@@ -596,7 +641,7 @@ svg.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-
         <div id="nfx-rows"></div>
       </section>
 
-      <div class="card full mb">
+      <div class="card full mb" id="card-outputs-home">
         <div class="card-head">
           <div class="card-title">Outputs recentes</div>
           <div class="card-act" onclick="nav('outputs')">ver todos →</div>
@@ -606,7 +651,7 @@ svg.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-
         </div>
       </div>
 
-      <div class="card full">
+      <div class="card full" id="card-negocio-home">
         <div class="card-head">
           <div class="card-title">Meu negócio</div>
           <div class="card-act" onclick="nav('negocio')"><svg class="ic"><use href="#i-pencil"/></svg>editar</div>
@@ -851,6 +896,30 @@ svg.ic{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:2;stroke-
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- ONBOARDING: botão de ajuda flutuante (presente em toda a plataforma) -->
+<div class="help-fab-tip" id="help-tip"></div>
+<button class="help-fab" id="help-fab" title="Ajuda / tour guiado" onclick="startTour()">?</button>
+
+<!-- ONBOARDING: camada do tour guiado -->
+<div class="tour" id="tour">
+  <div class="tour-block" id="tour-block"></div>
+  <div class="tour-spot" id="tour-spot"></div>
+  <div class="tour-pop" id="tour-pop">
+    <div class="tour-pop-head">
+      <div class="tour-pop-ic" id="tour-ic"></div>
+      <div class="tour-pop-title" id="tour-title"></div>
+      <div class="tour-pop-close" onclick="endTour()">×</div>
+    </div>
+    <div class="tour-pop-body" id="tour-text"></div>
+    <div class="tour-pop-foot">
+      <div class="tour-dots"><span id="tour-count">1/1</span><span class="tour-bar"><i id="tour-bar"></i></span></div>
+      <button class="tour-btn ghost" id="tour-prev" onclick="tourPrev()">Voltar</button>
+      <button class="tour-btn gold" id="tour-next" onclick="tourNext()">Próximo</button>
+    </div>
+    <div class="tour-pop-alt" id="tour-alt"></div>
+  </div>
+</div>
+
 <script>
 const API = 'http://localhost:5680/api';
 
@@ -956,6 +1025,7 @@ function nav(page, cat) {
   if (page === 'documentos') loadGaleria('documentos');
   if (page === 'outputs') loadOutputsFull();
   if (page === 'negocio') loadPerfil();
+  if (typeof updateHelpHint === 'function') updateHelpHint();
 }
 
 document.querySelectorAll('.ni[data-page]').forEach(ni => {
@@ -2461,6 +2531,290 @@ async function refreshCounts(){
   if (navEl) navEl.innerHTML = areaNavHtml(currentPage);
 }
 
+// ══ ONBOARDING / TOUR GUIADO ══════════════════════════════════════════════
+// Um único botão "?" fixo na tela. O conteúdo do tour muda conforme a página
+// aberta: na home ensina a plataforma inteira; dentro de uma área, ensina
+// apenas aquela área.
+
+const TOUR_SEEN_KEY = 'kitselect_tour_v1';
+
+// Passos comuns às cinco áreas (conteúdo, vender, atender, mercado, documentos)
+function areaSteps(page, o){
+  return [
+    {title:o.t1, icon:o.icon, text:o.d1},
+    {sel:'#area-nav-'+page, icon:'grid', title:'Trocar de área', pad:8,
+     text:'Estes atalhos levam para as outras áreas sem passar pelo menu. O número ao lado de cada uma mostra <strong>quantos materiais já estão salvos</strong> lá.'},
+    {sel:'#'+o.mid, icon:o.icon, title:o.t2, text:o.d2},
+    {sel:'#area-cta-'+page, icon:'copy', title:'Pedir um material novo', pad:8,
+     text:'Aqui ficam as ferramentas desta área. Clique em <em>copiar prompt</em>, cole no Claude e responda o que ele perguntar — o resultado volta salvo nesta mesma página, sem você precisar fazer mais nada.'},
+  ];
+}
+
+const TOURS = {
+
+  // ── HOME: tour completo da plataforma (passa por todas as páginas) ──
+  inicio: [
+    {icon:'zap', title:'Bem-vindo ao Kit Select IA',
+     text:'Em menos de dois minutos você vai conhecer <strong>todas as áreas do painel</strong>. Vou te levar por cada tela — é só ir clicando em <em>Próximo</em>. Pode sair quando quiser pelo × no canto.'},
+    {sel:'.sb', icon:'grid', title:'O menu lateral', pad:0, place:'right',
+     text:'Todo o painel se organiza aqui: <strong>Visão geral</strong> (início e progresso), <strong>Áreas</strong> (onde os materiais prontos ficam guardados) e <strong>Meus dados</strong> (seu perfil e o histórico completo).'},
+    {sel:'.tb-search', icon:'search', title:'Busca rápida', pad:6,
+     text:'Procure por qualquer <strong>ferramenta ou material salvo</strong> digitando aqui — útil quando o painel já tem muita coisa.'},
+    {page:'inicio', sel:'#nfx-hero', icon:'award', title:'Vitrine de destaques', pad:4,
+     text:'O carrossel do topo destaca as ferramentas mais usadas. Clicar em uma <strong>copia o prompt dela</strong> direto para você colar no Claude.'},
+    {page:'inicio', sel:'#nfx-rows', icon:'grid', title:'Trilhas por área', pad:6,
+     text:'As ferramentas ficam separadas em trilhas — Conteúdo, Vender, Atender, Mercado e Documentos. <strong>Cada cor é uma área</strong>, e essa mesma cor te acompanha em todo o painel.'},
+    {page:'inicio', sel:'#card-outputs-home', icon:'folder', title:'Outputs recentes', pad:8,
+     text:'Tudo o que o Claude gera para você aparece aqui automaticamente, do mais novo para o mais antigo. Clique em um para <strong>ler, copiar ou baixar em PDF</strong>.'},
+    {page:'inicio', sel:'#card-negocio-home', icon:'building', title:'Comece por aqui: seu negócio', pad:8,
+     text:'Esta é a <strong>base de tudo</strong>. Com o perfil preenchido, todas as ferramentas passam a falar no seu tom, para o seu cliente, com o seu diferencial — sem você repetir isso a cada pedido.'},
+    {page:'ferramentas', sel:'#tools-full', icon:'grid', title:'Catálogo completo', pad:8,
+     text:'Todas as ferramentas do kit, reunidas. O fluxo é sempre o mesmo: <em>copiar prompt</em> → colar no Claude → responder as perguntas → <strong>o material volta salvo na área certa</strong>.'},
+    {page:'conteudo', sel:'#cal-wrap', icon:'calendar', title:'Área: Conteúdo', pad:8,
+     text:'Seu calendário do mês com todos os posts aprovados. Clique em um dia para ver <strong>legenda, roteiro e descrição visual</strong> daquele post.'},
+    {page:'vender', sel:'#vender-gallery', icon:'dollar', title:'Área: Vender', pad:8,
+     text:'Anúncios e propostas comerciais ficam guardados aqui — prontos para ler, copiar ou <strong>baixar em PDF</strong> e mandar para o cliente.'},
+    {page:'atender', sel:'#atd-gallery', icon:'chat', title:'Área: Atender', pad:8,
+     text:'Seu banco de respostas prontas no tom da marca. Copie e cole direto no WhatsApp — <strong>sem travar na hora de responder</strong>.'},
+    {page:'mercado', sel:'#mercado-gallery', icon:'search', title:'Área: Mercado', pad:8,
+     text:'Relatórios de concorrentes e oportunidades. Use antes de lançar um produto ou <strong>ajustar preço</strong>.'},
+    {page:'documentos', sel:'#documentos-gallery', icon:'file', title:'Área: Documentos', pad:8,
+     text:'Contratos e documentos longos viram <strong>resumo com pontos de atenção</strong>. Serve para saber o que assinar sem ler 20 páginas.'},
+    {page:'progresso', sel:'#pg-wrap', icon:'trending', title:'Meu progresso', pad:8,
+     text:'Acompanha o quanto do kit você já ativou e <strong>sugere o próximo passo</strong> — quando estiver na dúvida do que fazer, comece por esta tela.'},
+    {page:'outputs', sel:'#output-filters', icon:'folder', title:'Outputs salvos', pad:8,
+     text:'O histórico completo de tudo o que já foi gerado, com <strong>filtros por tipo</strong>. Nada se perde: o que foi criado uma vez pode ser reaproveitado sempre.'},
+    {page:'negocio', sel:'#page-negocio .card', icon:'building', title:'Meu negócio', pad:8,
+     text:'Preencha uma vez e salve. Quanto mais completo o perfil, <strong>menos o Claude pergunta</strong> e mais o resultado sai com a sua cara.'},
+    {page:'inicio', sel:'#help-fab', icon:'zap', title:'A ajuda fica sempre aqui', round:true, pad:8, place:'left',
+     text:'Esse é o resumo do painel. Sempre que precisar, clique neste <strong>?</strong>: dentro de uma área ele explica <strong>só aquela área</strong>; aqui na home, refaz o tour completo.'},
+  ],
+
+  // ── ÁREAS ──
+  conteudo: areaSteps('conteudo', {
+    icon:'calendar', mid:'cal-wrap', t1:'Área de Conteúdo',
+    d1:'Aqui fica <strong>tudo o que você publica</strong>: calendário do mês, legendas, roteiros de Reels e briefings visuais. Vou mostrar como a tela funciona.',
+    t2:'Seu calendário do mês',
+    d2:'Cada quadradinho é um dia com post aprovado. Clique em um para abrir a <strong>legenda, o roteiro e a descrição visual</strong> — e para pedir o que ainda falta naquele post.'}),
+
+  vender: areaSteps('vender', {
+    icon:'dollar', mid:'vender-gallery', t1:'Área de Vender',
+    d1:'Seus <strong>materiais comerciais</strong> — anúncios e propostas — ficam guardados aqui, prontos para usar.',
+    t2:'Galeria de materiais',
+    d2:'Cada card é um material salvo. Clique para ler o texto completo, <strong>copiar</strong> ou <strong>baixar em PDF</strong> e enviar ao cliente. Também dá para pedir uma nova versão a partir dele.'}),
+
+  atender: areaSteps('atender', {
+    icon:'chat', mid:'atd-gallery', t1:'Área de Atender',
+    d1:'Seu <strong>banco de respostas prontas</strong> no tom da marca — para não travar na hora de responder cliente.',
+    t2:'Respostas salvas',
+    d2:'Clique em uma resposta para ver o texto completo e <strong>copiar direto pro WhatsApp</strong>. Se o cenário mudou, peça uma nova versão sem perder a antiga.'}),
+
+  mercado: areaSteps('mercado', {
+    icon:'search', mid:'mercado-gallery', t1:'Área de Mercado',
+    d1:'Suas <strong>pesquisas de concorrentes e oportunidades</strong>, guardadas para consultar quando for decidir preço, oferta ou lançamento.',
+    t2:'Relatórios salvos',
+    d2:'Clique em um relatório para ler tudo ou <strong>baixar em PDF</strong>. Vale refazer a pesquisa de tempos em tempos — o mercado muda.'}),
+
+  documentos: areaSteps('documentos', {
+    icon:'file', mid:'documentos-gallery', t1:'Área de Documentos',
+    d1:'Contratos e documentos longos <strong>resumidos com pontos de atenção</strong>, para você saber o que está assinando.',
+    t2:'Resumos salvos',
+    d2:'Clique em um documento para ler o resumo completo e os alertas, ou <strong>baixar em PDF</strong> para levar à reunião.'}),
+
+  // ── DEMAIS PÁGINAS ──
+  ferramentas: [
+    {icon:'grid', title:'Catálogo de ferramentas',
+     text:'Esta tela reúne <strong>todas as ferramentas do kit</strong>, organizadas por área. É o ponto de partida quando você quer pedir algo novo.'},
+    {sel:'#area-nav-ferramentas', icon:'grid', title:'Filtrar por área', pad:8,
+     text:'Use os atalhos do topo para ir direto à área que interessa.'},
+    {sel:'#tools-full', icon:'copy', title:'Como usar uma ferramenta', pad:8,
+     text:'Clique em <em>copiar prompt</em>, cole no Claude e responda as perguntas. O resultado <strong>volta salvo na área correspondente</strong> — você não precisa copiar nada de volta.'},
+  ],
+
+  progresso: [
+    {icon:'trending', title:'Meu progresso',
+     text:'Esta tela mostra <strong>o quanto do kit você já ativou</strong> e o que ainda não experimentou.'},
+    {sel:'#pg-wrap', icon:'target', title:'Onde você está', pad:8,
+     text:'Os indicadores contam ferramentas usadas e materiais gerados. Mais abaixo aparece o <strong>próximo passo sugerido</strong> — quando estiver sem saber o que fazer, siga por ele.'},
+  ],
+
+  outputs: [
+    {icon:'folder', title:'Outputs salvos',
+     text:'O <strong>histórico completo</strong> de tudo o que o Claude já gerou para o seu negócio.'},
+    {sel:'#output-filters', icon:'grid', title:'Filtros por tipo', pad:8,
+     text:'Clique em um filtro para ver só anúncios, só legendas, só pesquisas — e assim por diante.'},
+    {sel:'#outputs-full', icon:'file', title:'A lista completa', pad:8,
+     text:'Clique em qualquer item para <strong>ler, copiar, baixar em PDF</strong> ou adicionar ao calendário de conteúdo.'},
+  ],
+
+  negocio: [
+    {icon:'building', title:'Meu negócio: a base de tudo',
+     text:'Esta é a tela <strong>mais importante do painel</strong>. Tudo o que o Claude escreve parte daqui.'},
+    {sel:'#page-negocio .form-grid', icon:'pencil', title:'Preencha uma vez só', pad:8,
+     text:'Nome, segmento, cliente ideal, tom de voz e diferencial. Com isso preenchido, as ferramentas <strong>param de perguntar o básico</strong> e já entregam no seu estilo.'},
+    {sel:'#page-negocio .form-actions', icon:'check', title:'Não esqueça de salvar', pad:8,
+     text:'Clique em <em>Salvar perfil</em>. Pode voltar e ajustar quando quiser — o negócio muda, o perfil acompanha.'},
+  ],
+};
+
+let tourSteps = [], tourIdx = 0, tourKey = 'inicio', tourBusy = false;
+
+// Inicia o tour da página aberta (na home = tour completo da plataforma)
+function startTour(key){
+  const k = key || currentPage;
+  tourKey = TOURS[k] ? k : 'inicio';
+  tourSteps = TOURS[tourKey];
+  tourIdx = 0;
+  localStorage.setItem(TOUR_SEEN_KEY, '1');
+  document.getElementById('help-fab').classList.remove('pulse');
+  hideHelpTip();
+  document.getElementById('tour').classList.add('on');
+  showTourStep();
+}
+
+function endTour(){
+  document.getElementById('tour').classList.remove('on');
+  localStorage.setItem(TOUR_SEEN_KEY, '1');
+}
+
+function tourNext(){
+  if (tourBusy) return;
+  if (tourIdx >= tourSteps.length - 1) { endTour(); toast('Tour concluído. O "?" continua aí quando precisar.'); return; }
+  tourIdx++; showTourStep();
+}
+
+function tourPrev(){
+  if (tourBusy || tourIdx === 0) return;
+  tourIdx--; showTourStep();
+}
+
+async function showTourStep(){
+  const s = tourSteps[tourIdx];
+  tourBusy = true;
+
+  // Se o passo mora em outra página, navega antes e espera o render
+  if (s.page && s.page !== currentPage) {
+    nav(s.page);
+    await new Promise(r => setTimeout(r, 420));
+  }
+
+  // Preenche o balão
+  document.getElementById('tour-ic').innerHTML = icon(s.icon || 'zap');
+  document.getElementById('tour-title').textContent = s.title;
+  document.getElementById('tour-text').innerHTML = s.text;
+  document.getElementById('tour-count').textContent = (tourIdx+1) + '/' + tourSteps.length;
+  document.getElementById('tour-bar').style.width = Math.round(((tourIdx+1)/tourSteps.length)*100) + '%';
+  document.getElementById('tour-prev').style.visibility = tourIdx === 0 ? 'hidden' : 'visible';
+  document.getElementById('tour-next').textContent = tourIdx === tourSteps.length-1 ? 'Entendi' : 'Próximo';
+
+  // Rodapé: dentro de uma área, oferece o tour completo da plataforma
+  const alt = document.getElementById('tour-alt');
+  if (tourKey !== 'inicio') {
+    alt.style.display = 'flex';
+    alt.innerHTML = icon('zap') + '<span>Quer conhecer o painel inteiro? <b onclick="startTour(\'inicio\')">ver tour completo</b></span>';
+  } else {
+    alt.style.display = 'none';
+    alt.innerHTML = '';
+  }
+
+  // Traz o elemento destacado para a área visível
+  const el = s.sel ? document.querySelector(s.sel) : null;
+  if (el) {
+    el.scrollIntoView({block:'center', behavior:'smooth'});
+    await new Promise(r => setTimeout(r, 320));
+  }
+  positionTour(s);
+  tourBusy = false;
+}
+
+// Posiciona o recorte de destaque e o balão em relação ao elemento
+function positionTour(s){
+  const spot = document.getElementById('tour-spot');
+  const pop  = document.getElementById('tour-pop');
+  const el   = s.sel ? document.querySelector(s.sel) : null;
+  const vw = window.innerWidth, vh = window.innerHeight, M = 14;
+
+  // Passo sem alvo (ou alvo ausente): balão centralizado, tela toda escurecida
+  if (!el || !el.getClientRects().length) {
+    spot.classList.add('center');
+    spot.style.top = (vh/2)+'px'; spot.style.left = (vw/2)+'px';
+    spot.style.width = '0px'; spot.style.height = '0px'; spot.style.borderRadius = '50%';
+    pop.style.top  = Math.max(M, (vh - pop.offsetHeight)/2) + 'px';
+    pop.style.left = Math.max(M, (vw - pop.offsetWidth)/2) + 'px';
+    return;
+  }
+
+  const r = el.getBoundingClientRect();
+  const p = s.pad == null ? 6 : s.pad;
+  const t = Math.max(0, r.top - p), l = Math.max(0, r.left - p);
+  const w = Math.min(vw, r.width + p*2), h = Math.min(vh, r.height + p*2);
+  spot.classList.remove('center');
+  spot.style.top = t+'px'; spot.style.left = l+'px';
+  spot.style.width = w+'px'; spot.style.height = h+'px';
+  spot.style.borderRadius = s.round ? '50%' : '';
+
+  const pw = pop.offsetWidth || 334, ph = pop.offsetHeight || 200;
+  const clampX = x => Math.min(Math.max(M, x), vw - pw - M);
+  const clampY = y => Math.min(Math.max(M, y), vh - ph - M);
+  let top, left;
+
+  if (s.place === 'right' && l + w + M + pw < vw) {
+    left = l + w + M; top = clampY(t + h/2 - ph/2);
+  } else if (s.place === 'left' && l - M - pw > 0) {
+    left = l - M - pw; top = clampY(t + h/2 - ph/2);
+  } else if (t + h + M + ph < vh) {                 // cabe abaixo
+    top = t + h + M; left = clampX(l + w/2 - pw/2);
+  } else if (t - M - ph > 0) {                      // cabe acima
+    top = t - M - ph; left = clampX(l + w/2 - pw/2);
+  } else if (l + w + M + pw < vw) {                 // cabe à direita
+    left = l + w + M; top = clampY(t + h/2 - ph/2);
+  } else if (l - M - pw > 0) {                      // cabe à esquerda
+    left = l - M - pw; top = clampY(t + h/2 - ph/2);
+  } else {                                          // sem espaço: centraliza
+    top = clampY((vh - ph)/2); left = clampX((vw - pw)/2);
+  }
+  pop.style.top = top+'px'; pop.style.left = left+'px';
+}
+
+// Teclado: setas navegam, Esc encerra
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('tour').classList.contains('on')) return;
+  if (e.key === 'Escape') { endTour(); }
+  else if (e.key === 'ArrowRight' || e.key === 'Enter') { e.preventDefault(); tourNext(); }
+  else if (e.key === 'ArrowLeft') { e.preventDefault(); tourPrev(); }
+});
+
+window.addEventListener('resize', () => {
+  if (document.getElementById('tour').classList.contains('on') && !tourBusy) positionTour(tourSteps[tourIdx]);
+});
+
+// O texto do botão "?" acompanha a página aberta
+function updateHelpHint(){
+  const fab = document.getElementById('help-fab');
+  if (!fab) return;
+  fab.title = currentPage === 'inicio'
+    ? 'Tour completo: conheça todas as funcionalidades'
+    : 'Como funciona esta área: ' + (PAGE_TITLES[currentPage] || currentPage);
+}
+
+let helpTipTimer = null;
+function showHelpTip(html, ms){
+  const tip = document.getElementById('help-tip');
+  tip.innerHTML = html;
+  tip.classList.add('on');
+  clearTimeout(helpTipTimer);
+  if (ms) helpTipTimer = setTimeout(hideHelpTip, ms);
+}
+function hideHelpTip(){ document.getElementById('help-tip').classList.remove('on'); }
+
+// Passar o mouse no "?" já avisa o que ele vai ensinar naquela tela
+document.getElementById('help-fab').addEventListener('mouseenter', () => {
+  showHelpTip(currentPage === 'inicio'
+    ? 'Conheça <strong>todas as funcionalidades</strong>'
+    : 'Como funciona <strong>' + (PAGE_TITLES[currentPage] || currentPage) + '</strong>');
+});
+document.getElementById('help-fab').addEventListener('mouseleave', hideHelpTip);
+
 async function init() {
   renderNetflixHome();
   renderToolsFull();
@@ -2468,6 +2822,14 @@ async function init() {
   await loadPerfil();
   await loadOutputsHome();
   await refreshCounts();
+
+  // Onboarding: no primeiro acesso o "?" pulsa e convida para o tour completo
+  updateHelpHint();
+  if (!localStorage.getItem(TOUR_SEEN_KEY)) {
+    document.getElementById('help-fab').classList.add('pulse');
+    setTimeout(() => showHelpTip('Primeira vez aqui? <strong>Clique no ?</strong> e eu te mostro o painel.', 9000), 1200);
+  }
+
   // Auto-refresh a cada 15s
   setInterval(async ()=>{
     await loadStatus();
